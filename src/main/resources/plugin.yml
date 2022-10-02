@@ -1,0 +1,6 @@
+name: Athena
+version: '${project.version}'
+main: net.aegis.athena.Athena
+api-version: 1.19
+authors: [ Cynshiii ]
+description: Aegis' custom Java plugin
