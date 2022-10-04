@@ -4,3 +4,9 @@ main: net.aegis.athena.Athena
 api-version: 1.19
 authors: [ Cynshiii ]
 description: Aegis' custom Java plugin
+commands:
+  discord:
+    description: Get an invite link to the server's discord
+    usage: /<command>
+    aliases:
+      - dc
