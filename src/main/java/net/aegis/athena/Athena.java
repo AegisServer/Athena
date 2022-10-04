@@ -1,7 +1,8 @@
 package net.aegis.athena;
 
-import net.aegis.athena.listeners.JoinLeaveMessages;
-import net.aegis.athena.listeners.RandomSpawn;
+import net.aegis.athena.features.commands.DiscordCommand;
+import net.aegis.athena.features.listeners.JoinLeaveMessages;
+import net.aegis.athena.features.listeners.RandomSpawn;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Athena extends JavaPlugin {
@@ -16,6 +17,10 @@ public final class Athena extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new RandomSpawn(), this);
 
 		//end of listener registry
+
+		//register command classes
+
+		getCommand("discord").setExecutor((new DiscordCommand()));
 
 	}
 
