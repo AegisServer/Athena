@@ -1,4 +1,4 @@
-package net.aegis.athena.listeners;
+package net.aegis.athena.features.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
