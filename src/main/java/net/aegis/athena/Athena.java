@@ -1,8 +1,9 @@
 package net.aegis.athena;
 
 import net.aegis.athena.features.commands.DiscordCommand;
-import net.aegis.athena.features.listeners.JoinLeaveMessages;
-import net.aegis.athena.features.listeners.RandomSpawn;
+import net.aegis.athena.features.listeners.JoinLeaveListener;
+import net.aegis.athena.features.listeners.OlympusBreakListener;
+import net.aegis.athena.features.listeners.RandomSpawnListener;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -23,8 +24,9 @@ public final class Athena extends JavaPlugin {
 		// Plugin startup logic
 
 		//register listener classes
-		getServer().getPluginManager().registerEvents(new JoinLeaveMessages(), this);
-		getServer().getPluginManager().registerEvents(new RandomSpawn(), this);
+		getServer().getPluginManager().registerEvents(new JoinLeaveListener(), this);
+		getServer().getPluginManager().registerEvents(new RandomSpawnListener(), this);
+		getServer().getPluginManager().registerEvents(new OlympusBreakListener(), this);
 		//end of listener registry
 
 		//register command classes
