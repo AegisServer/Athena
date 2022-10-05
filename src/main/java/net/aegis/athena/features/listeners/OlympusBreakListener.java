@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-public class OlympusBreakListener implements Listener {
+public class OlympusBreakListener extends net.aegis.athena.utils.ChatColor implements Listener {
 
 	public static World getWorld() {
 		return Bukkit.getWorld("mountaindoodle");
@@ -56,6 +56,8 @@ public class OlympusBreakListener implements Listener {
 		return (ItemStack) block.getDrops().toArray()[0];
 	}
 
+	String aegisRed = "#9F6E75";
+
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
@@ -65,7 +67,7 @@ public class OlympusBreakListener implements Listener {
 		event.setCancelled(true);
 
 		if (event.getBlock().getType() != Material.WHEAT) {
-			player.sendMessage(ChatColor.DARK_PURPLE + "You cannot break that here");
+			player.sendMessage(aegisRed + "You cannot break that here");
 		} else {
 			Ageable ageable = (Ageable) block.getBlockData();
 			ageable.setAge(0);
