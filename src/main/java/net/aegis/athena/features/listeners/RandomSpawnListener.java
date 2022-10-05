@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class RandomSpawn implements Listener {
+public class RandomSpawnListener implements Listener {
 
 	private static List<Location> spawnpoints = new ArrayList<>() {{
 		add(new Location(Bukkit.getWorld("world"), 500, 70, 250));
