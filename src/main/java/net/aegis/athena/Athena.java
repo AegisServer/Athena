@@ -26,7 +26,7 @@ public final class Athena extends JavaPlugin {
 		//register listener classes
 		getServer().getPluginManager().registerEvents(new JoinLeaveListener(), this);
 		getServer().getPluginManager().registerEvents(new RandomSpawnListener(), this);
-		getServer().getPluginManager().registerEvents(new OlympusBreakListener(), this);
+		getServer().getPluginManager().registerEvents(new OlympusBreakListener(this), this);
 		//end of listener registry
 
 		//register command classes
