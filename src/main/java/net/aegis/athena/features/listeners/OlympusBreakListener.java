@@ -16,13 +16,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-public class OlympusBreakListener extends net.aegis.athena.utils.ChatColor implements Listener {
+public class OlympusBreakListener implements Listener {
 
-	private final Athena athena;
-
-	public OlympusBreakListener(Athena athena) {
-		this.athena = athena;
-	}
 
 	public static World getWorld() {
 		return Bukkit.getWorld("mountaindoodle");
@@ -78,7 +73,7 @@ public class OlympusBreakListener extends net.aegis.athena.utils.ChatColor imple
 
 		if (event.getBlock().getType() != Material.WHEAT) {
 			TextComponent component = Component.text("You cannot break that here", TextColor.fromHexString(aegisRed));
-			athena.adventure().player(player).sendMessage(component);
+			Athena.getInstance().adventure().player(player).sendMessage(component);
 		} else {
 			Ageable ageable = (Ageable) block.getBlockData();
 			ageable.setAge(0);
