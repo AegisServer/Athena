@@ -1,16 +1,36 @@
 package net.aegis.athena;
 
 import net.aegis.athena.features.commands.DiscordCommand;
+import net.aegis.athena.features.commands.ShowItemCommand;
 import net.aegis.athena.features.listeners.JoinLeaveListener;
 import net.aegis.athena.features.listeners.OlympusBreakListener;
 import net.aegis.athena.features.listeners.RandomSpawnListener;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.logging.Level;
+
 public final class Athena extends JavaPlugin {
 
+	private static Athena instance;
+
 	private BukkitAudiences adventure;
+
+	public Athena() {
+		if (instance == null) {
+			instance = this;
+		} else
+			Bukkit.getServer().getLogger().info("Athena could not be initialized: Instance is not null but is: " + instance.getClass().getName());
+	}
+
+	public static Athena getInstance() {
+		if (instance == null)
+			Bukkit.getServer().getLogger().info("Athena could not be initialized");
+		return instance;
+	}
 
 	public @NonNull BukkitAudiences adventure() {
 		if(this.adventure == null) {
@@ -19,6 +39,10 @@ public final class Athena extends JavaPlugin {
 		return this.adventure;
 	}
 
+	String aegisRed = "#9F6E75";
+	String aegisBlue = "#6E759F";
+	String aegisBeige = "&#C1BCAB";
+
 	@Override
 	public void onEnable() {
 		// Plugin startup logic
@@ -26,11 +50,12 @@ public final class Athena extends JavaPlugin {
 		//register listener classes
 		getServer().getPluginManager().registerEvents(new JoinLeaveListener(), this);
 		getServer().getPluginManager().registerEvents(new RandomSpawnListener(), this);
-		getServer().getPluginManager().registerEvents(new OlympusBreakListener(this), this);
+		getServer().getPluginManager().registerEvents(new OlympusBreakListener(), this);
 		//end of listener registry
 
 		//register command classes
 		getCommand("discord").setExecutor(new DiscordCommand(this));
+		getCommand("showitem").setExecutor(new ShowItemCommand());
 		//end of command registry
 
 		//kyori adventure registry
@@ -52,5 +77,37 @@ public final class Athena extends JavaPlugin {
 
 		//end of kyori adventure
 
+	}
+
+	public static void log(String message) {
+		log(Level.INFO, message);
+	}
+
+	public static void log(String message, Throwable ex) {
+		log(Level.INFO, message, ex);
+	}
+
+	public static void warn(String message) {
+		log(Level.WARNING, message);
+	}
+
+	public static void warn(String message, Throwable ex) {
+		log(Level.WARNING, message, ex);
+	}
+
+	public static void severe(String message) {
+		log(Level.SEVERE, message);
+	}
+
+	public static void severe(String message, Throwable ex) {
+		log(Level.SEVERE, message, ex);
+	}
+
+	public static void log(Level level, String message) {
+		log(level, message, null);
+	}
+
+	public static void log(Level level, String message, Throwable ex) {
+		getInstance().getLogger().log(level, ChatColor.stripColor(message), ex);
 	}
 }
