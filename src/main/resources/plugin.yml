@@ -10,3 +10,8 @@ commands:
     usage: /<command>
     aliases:
       - dc
+  showitem:
+    description: Show the item in your hand
+    usage: /<command>
+    aliases:
+      - showhand
