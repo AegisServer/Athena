@@ -14,6 +14,12 @@ public class ShowItemCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
+		/**
+		 * TODO:
+		 * turn .send(player) into a broadcast being sent from the player so that other users can see the /showitem; requires own chat api
+		 * let users specify between hand or offhand- armor slots will not be supported
+		 */
+
 		if (!(sender instanceof Player player))
 			return true;
 		if (!(player.hasPermission("athena.showitem")))
