@@ -1,11 +1,16 @@
 package net.aegis.athena;
 
+import com.mongodb.Block;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import net.aegis.athena.features.commands.DiscordCommand;
 import net.aegis.athena.features.commands.ShowItemCommand;
 import net.aegis.athena.features.listeners.JoinLeaveListener;
 import net.aegis.athena.features.listeners.OlympusBreakListener;
 import net.aegis.athena.features.listeners.RandomSpawnListener;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,13 +44,15 @@ public final class Athena extends JavaPlugin {
 		return this.adventure;
 	}
 
-	String aegisRed = "#9F6E75";
-	String aegisBlue = "#6E759F";
-	String aegisBeige = "&#C1BCAB";
-
 	@Override
 	public void onEnable() {
 		// Plugin startup logic
+
+		//mongodb stuff
+		MongoClient mongoClient = MongoClients.create("mongodb+srv://aegisserver:x9jAzMdUH7UQaudu@aegis.knsyfbs.mongodb.net/?retryWrites=true&w=majority");
+//		MongoCollection<Document> collection = mongoClient.getDatabase("Aegis").getCollection("users");
+		System.out.println("Connected to Database");
+		//end of mongodb stuff
 
 		//register listener classes
 		getServer().getPluginManager().registerEvents(new JoinLeaveListener(), this);
