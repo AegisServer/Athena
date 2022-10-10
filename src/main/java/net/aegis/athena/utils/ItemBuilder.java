@@ -1,5 +1,6 @@
 package net.aegis.athena.utils;
 
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.aegis.athena.Athena;
@@ -33,6 +34,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static net.aegis.athena.utils.Nullables.isNullOrAir;
 import static net.aegis.athena.utils.Nullables.isNullOrEmpty;
 import static net.aegis.athena.utils.StringUtils.colorize;
 
@@ -600,4 +602,53 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 		return item;
 	}
+
+	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
+		final NBTItem nbtItem = nbtItem();
+		consumer.accept(nbtItem);
+		itemStack = nbtItem.getItem();
+		itemMeta = itemStack.getItemMeta();
+		return this;
+	}
+
+	@NotNull
+	private NBTItem nbtItem() {
+		return new NBTItem(build());
+	}
+
+	public ItemBuilder modelId(int id) {
+//		if (id > 0)
+//			nbt(item -> item.setInteger(CustomModel.NBT_KEY, id));
+		return this;
+	}
+
+//	public int modelId() {
+//		NBTItem nbtItem = nbtItem();
+//		final Integer modelId = nbtItem.getInteger(CustomModel.NBT_KEY);
+//		return modelId == null ? 0 : modelId;
+//	}
+
+//	public static class ModelId {
+//
+//		public static int of(ItemStack item) {
+//			if (isNullOrAir(item))
+//				return 0;
+//
+//			return of(new ItemBuilder(item));
+//		}
+//
+//		public static int of(ItemBuilder item) {
+//			return item.modelId();
+//		}
+
+//		public static boolean hasModelId(ItemStack item) {
+//			return of(item) != 0;
+//		}
+//
+//		public static boolean hasModelId(ItemBuilder item) {
+//			return of(item) != 0;
+//		}
+//
+//	}
+
 }
