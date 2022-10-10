@@ -1,16 +1,13 @@
 package net.aegis.athena;
 
-import com.mongodb.Block;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
 import net.aegis.athena.features.commands.DiscordCommand;
 import net.aegis.athena.features.commands.ShowItemCommand;
 import net.aegis.athena.features.listeners.JoinLeaveListener;
 import net.aegis.athena.features.listeners.OlympusBreakListener;
 import net.aegis.athena.features.listeners.RandomSpawnListener;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -48,10 +45,16 @@ public final class Athena extends JavaPlugin {
 	public void onEnable() {
 		// Plugin startup logic
 
+		//config initialization
+		getConfig().options().copyDefaults();
+		saveDefaultConfig();
+		//end of config initialization
+
 		//mongodb stuff
-		MongoClient mongoClient = MongoClients.create("mongodb+srv://aegisserver:x9jAzMdUH7UQaudu@aegis.knsyfbs.mongodb.net/?retryWrites=true&w=majority");
+		String url = getConfig().getString("Url");
+		MongoClient mongoClient = MongoClients.create(url);
 //		MongoCollection<Document> collection = mongoClient.getDatabase("Aegis").getCollection("users");
-		System.out.println("Connected to Database");
+		log("Connected to Database");
 		//end of mongodb stuff
 
 		//register listener classes
@@ -76,12 +79,10 @@ public final class Athena extends JavaPlugin {
 		// Plugin shutdown logic
 
 		//kyori adventure shutdown logic
-
 		if(this.adventure != null) {
 			this.adventure.close();
 			this.adventure = null;
 		}
-
 		//end of kyori adventure
 
 	}
