@@ -1,5 +1,7 @@
 package net.aegis.athena.framework.commands;
 
+
+
 import lombok.Getter;
 import net.aegis.athena.Athena;
 import net.aegis.athena.framework.commands.models.CustomCommand;
@@ -8,11 +10,13 @@ import net.aegis.athena.framework.commands.models.annotations.ConverterFor;
 import net.aegis.athena.framework.commands.models.annotations.DoubleSlash;
 import net.aegis.athena.framework.commands.models.annotations.TabCompleterFor;
 import net.aegis.athena.utils.StringUtils;
+import net.aegis.athena.utils.Timer;
 import net.aegis.athena.utils.Utils;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
 import java.util.*;
+
 
 import static net.aegis.athena.utils.ReflectionUtils.methodsAnnotatedWith;
 import static net.aegis.athena.utils.ReflectionUtils.subTypesOf;
