@@ -2,7 +2,9 @@ package net.aegis.athena.utils;
 
 import lombok.*;
 import net.aegis.athena.Athena;
+import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
 import net.aegis.athena.utils.TimeUtils.TickTime;
+import net.aegis.athena.utils.location.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -232,41 +234,41 @@ public class Tasks {
 		}
 	}
 
-//	public static class ExpBarCountdown {
-//		private final AtomicReference<Countdown> countdown = new AtomicReference<>();
-//
-//		public int getTaskId() {
-//			return countdown.get().getTaskId();
-//		}
-//
-//		@Builder(buildMethodName = "start")
-//		public ExpBarCountdown(HasPlayer player, int duration, boolean restoreExp) {
-//			Player _player = player.getPlayer();
-//			final int level = _player.getLevel();
-//			final float exp = _player.getExp();
-//
-//			countdown.set(Countdown.builder()
-//					.duration(duration)
-//					.onTick(ticks -> {
-//						if (!_player.isOnline())
-//							countdown.get().stop();
-//
-//						long seconds = (ticks / 20) + 1;
-//						_player.setLevel((int) (seconds > 59 ? seconds / 60 : seconds));
-//						_player.setExp((float) ticks / duration);
-//					})
-//					.onComplete(() -> {
-//						if (!_player.isOnline())
-//							countdown.get().stop();
-//
-//						if (restoreExp) {
-//							_player.setLevel(level);
-//							_player.setExp(exp);
-//						}
-//					})
-//					.start());
-//		}
-//	}
+	public static class ExpBarCountdown {
+		private final AtomicReference<Countdown> countdown = new AtomicReference<>();
+
+		public int getTaskId() {
+			return countdown.get().getTaskId();
+		}
+
+		@Builder(buildMethodName = "start")
+		public ExpBarCountdown(HasPlayer player, int duration, boolean restoreExp) {
+			Player _player = player.getPlayer();
+			final int level = _player.getLevel();
+			final float exp = _player.getExp();
+
+			countdown.set(Tasks.Countdown.builder()
+					.duration(duration)
+					.onTick(ticks -> {
+						if (!_player.isOnline())
+							countdown.get().stop();
+
+						long seconds = (ticks / 20) + 1;
+						_player.setLevel((int) (seconds > 59 ? seconds / 60 : seconds));
+						_player.setExp((float) ticks / duration);
+					})
+					.onComplete(() -> {
+						if (!_player.isOnline())
+							countdown.get().stop();
+
+						if (restoreExp) {
+							_player.setLevel(level);
+							_player.setExp(exp);
+						}
+					})
+					.start());
+		}
+	}
 
 	@Data
 	@AllArgsConstructor

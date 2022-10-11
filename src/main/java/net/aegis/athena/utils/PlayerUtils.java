@@ -1,16 +1,27 @@
 package net.aegis.athena.utils;
 
+import de.tr7zw.nbtapi.NBTContainer;
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
+import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
+import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotFoundException;
 import net.aegis.athena.framework.interfaces.HasUniqueId;
+import net.aegis.athena.framework.persistence.mongodb.models.nerd.Nerd;
+import net.aegis.athena.framework.persistence.mongodb.models.nerd.NerdService;
+import net.aegis.athena.framework.persistence.mongodb.models.nickname.Nickname;
+import net.aegis.athena.framework.persistence.mongodb.models.nickname.NicknameService;
+import net.aegis.athena.utils.location.HasOfflinePlayer;
+import net.aegis.athena.utils.location.HasPlayer;
+import net.aegis.athena.utils.location.OptionalPlayer;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,11 +33,17 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static net.aegis.athena.utils.Nullables.isNullOrAir;
+import static net.aegis.athena.utils.UUIDUtils.isUuid;
 
 public class PlayerUtils {
 
 	public static @NotNull OfflinePlayer getPlayer(UUID uuid) {
 		return Bukkit.getOfflinePlayer(uuid);
+	}
+
+	public static @NotNull OfflinePlayer getPlayer(HasUniqueId uuid) {
+		return getPlayer(uuid.getUniqueId());
 	}
 
 	public static @NotNull OfflinePlayer getPlayer(Identity identity) {
@@ -223,6 +240,101 @@ public class PlayerUtils {
 			get().forEach(consumer);
 		}
 
+		public static void giveItem(HasPlayer player, Material material) {
+			giveItem(player, material, 1);
+		}
+
+		public static void giveItem(HasPlayer player, Material material, String nbt) {
+			giveItem(player, material, 1, nbt);
+		}
+
+		public static void giveItem(HasPlayer player, Material material, int amount) {
+			giveItem(player, material, amount, null);
+		}
+
+		public static void giveItem(HasPlayer player, Material material, int amount, String nbt) {
+			Player _player = player.getPlayer();
+			if (material == Material.AIR)
+				throw new InvalidInputException("Cannot spawn air");
+
+			if (amount > 64) {
+				for (int i = 0; i < (amount / 64); i++)
+					giveItem((HasOfflinePlayer) _player, new ItemStack(material, 64), nbt);
+				giveItem((HasOfflinePlayer) _player, new ItemStack(material, amount % 64), nbt);
+			} else {
+				giveItem((HasOfflinePlayer) _player, new ItemStack(material, amount), nbt);
+			}
+		}
+
+		public static void giveItem(HasOfflinePlayer player, ItemStack item) {
+			giveItems(player, Collections.singletonList(item));
+		}
+
+		public static void giveItem(HasOfflinePlayer player, ItemStack item, String nbt) {
+			giveItems(player, Collections.singletonList(item), nbt);
+		}
+
+		public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items) {
+			giveItems(player, items, null);
+		}
+
+		public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items, String nbt) {
+			List<ItemStack> finalItems = new ArrayList<>(items);
+			finalItems.removeIf(Nullables::isNullOrAir);
+			finalItems.removeIf(itemStack -> itemStack.getAmount() == 0);
+			if (!Nullables.isNullOrEmpty(nbt)) {
+				finalItems.clear();
+				NBTContainer nbtContainer = new NBTContainer(nbt);
+				for (ItemStack item : new ArrayList<>(items)) {
+					NBTItem nbtItem = new NBTItem(item);
+					nbtItem.mergeCompound(nbtContainer);
+					finalItems.add(nbtItem.getItem());
+				}
+			}
+		}
+
+		public static List<ItemStack> giveItemsAndGetExcess(HasOfflinePlayer player, ItemStack item) {
+			return giveItemsAndGetExcess(player, Collections.singletonList(item));
+		}
+
+		public static List<ItemStack> giveItemsAndGetExcess(HasOfflinePlayer player, List<ItemStack> items) {
+			if (!player.getOfflinePlayer().isOnline() || player.getOfflinePlayer().getPlayer() == null)
+				return items;
+
+			return giveItemsAndGetExcess(player.getOfflinePlayer().getPlayer().getInventory(), items);
+		}
+
+		@NotNull
+		public static List<ItemStack> giveItemsAndGetExcess(Inventory inventory, List<ItemStack> items) {
+			return new ArrayList<>() {{
+				for (ItemStack item : fixMaxStackSize(items))
+					if (!isNullOrAir(item))
+						addAll(inventory.addItem(item.clone()).values());
+			}};
+		}
+
+		public static List<ItemStack> fixMaxStackSize(List<ItemStack> items) {
+			List<ItemStack> fixed = new ArrayList<>();
+			for (ItemStack item : items) {
+				if (isNullOrAir(item))
+					continue;
+
+				final Material material = item.getType();
+
+				while (item.getAmount() > material.getMaxStackSize()) {
+					final ItemStack replacement = item.clone();
+					final int moving = Math.min(material.getMaxStackSize(), item.getAmount() - material.getMaxStackSize());
+					replacement.setAmount(moving);
+					item.setAmount(item.getAmount() - moving);
+
+					fixed.add(replacement);
+				}
+				fixed.add(item);
+			}
+
+			return fixed;
+		}
+
 		@AllArgsConstructor
 		private enum Filter {
 //			AFK(
@@ -281,8 +393,42 @@ public class PlayerUtils {
 			Tasks.sync(command);
 	}
 
+	public static void runCommandAsOp(CommandSender sender, String commandNoSlash) {
+		boolean deop = !sender.isOp();
+		sender.setOp(true);
+		runCommand(sender, commandNoSlash);
+		if (deop)
+			sender.setOp(false);
+	}
+
 	public static void runCommandAsConsole(String commandNoSlash) {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
+	}
+
+	@Contract("null, _ -> false; _, null -> false")
+	public static boolean canSee(@Nullable Player viewer, @Nullable Player target) {
+		if (viewer == null || target == null)
+			return false;
+		if (!viewer.canSee(target))
+			return false;
+
+		return viewer.hasPermission("pv.see");
+	}
+
+	/**
+	 * Tests if a player can see a vanished player. Returns false if either player is null.
+	 * @param viewer player who is viewing
+	 * @param target target player to check
+	 * @return true if the target can be seen by the viewer
+	 */
+	public static boolean canSee(@NotNull OptionalPlayer viewer, @NotNull OptionalPlayer target) {
+		return canSee(viewer.getPlayer(), target.getPlayer());
+	}
+
+	public static List<String> getOnlineUuids() {
+		return OnlinePlayers.getAll().stream()
+				.map(player -> player.getUniqueId().toString())
+				.collect(toList());
 	}
 
 }

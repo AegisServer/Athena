@@ -32,15 +32,6 @@ import static net.aegis.athena.utils.ReflectionUtils.subTypesOf;
 
 public class Utils {
 
-	public static boolean isLong(String text) {
-		try {
-			Long.parseLong(text);
-			return true;
-		} catch (Exception ex) {
-			return false;
-		}
-	}
-
 	public static void registerListeners(Package packageObject) {
 		registerListeners(packageObject.getName());
 	}
@@ -93,6 +84,22 @@ public class Utils {
 
 	public static boolean isBoolean(Parameter parameter) {
 		return parameter.getType() == Boolean.class || parameter.getType() == Boolean.TYPE;
+	}
+
+	public static <K extends Comparable<? super K>, V> LinkedHashMap<K, V> sortByKey(Map<K, V> map) {
+		return collect(map.entrySet().stream().sorted(Entry.comparingByKey()));
+	}
+
+	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValue(Map<K, V> map) {
+		return collect(map.entrySet().stream().sorted(Entry.comparingByValue()));
+	}
+
+	public static <K extends Comparable<? super K>, V> LinkedHashMap<K, V> sortByKeyReverse(Map<K, V> map) {
+		return reverse(sortByKey(map));
+	}
+
+	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValueReverse(Map<K, V> map) {
+		return reverse(sortByValue(map));
 	}
 
 	@SneakyThrows
@@ -280,6 +287,33 @@ public class Utils {
 	}
 
 	public static final String ALPHANUMERICS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+	public static boolean isLong(String text) {
+		try {
+			Long.parseLong(text);
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
+	public static boolean isInt(String text) {
+		try {
+			Integer.parseInt(text);
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
+	public static boolean isDouble(String text) {
+		try {
+			Double.parseDouble(text);
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
+	}
 
 	public static boolean canEnable(Class<?> clazz) {
 		if (clazz.getSimpleName().startsWith("_"))

@@ -29,7 +29,7 @@ public class AdventureUtils {
 	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').flattener(Bukkit.getUnsafe().componentFlattener()).build();
-	//public static final Title.Times BASIC_TIMES = Title.Times.of(TimeUtils.TickTime.SECOND.duration(1, 2), TimeUtils.TickTime.SECOND.duration(5), TimeUtils.TickTime.SECOND.duration(1, 2));
+	public static final Title.Times BASIC_TIMES = Title.Times.of(TimeUtils.TickTime.SECOND.duration(1, 2), TimeUtils.TickTime.SECOND.duration(5), TimeUtils.TickTime.SECOND.duration(1, 2));
 
 	public static Component stripColor(ComponentLike componentLike) {
 		Component component = componentLike.asComponent();

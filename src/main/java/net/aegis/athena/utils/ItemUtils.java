@@ -5,6 +5,7 @@ import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputExceptio
 import net.minecraft.world.effect.MobEffect;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionUtil;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -23,6 +24,18 @@ import java.util.Map;
 import static net.aegis.athena.utils.Nullables.isNullOrAir;
 
 public class ItemUtils {
+
+	public static List<Enchantment> getApplicableEnchantments(ItemStack item) {
+		List<Enchantment> applicable = new ArrayList<>();
+		for (Enchantment enchantment : Enchant.values()) {
+			try {
+				item = new ItemStack(item.getType());
+				item.addEnchantment(enchantment, 1);
+				applicable.add(enchantment); // if it gets here it hasnt errored, so its valid
+			} catch (Exception ex) { /* Not applicable, do nothing */ }
+		}
+		return applicable;
+	}
 
 	public static ItemStack getTool(Player player, EquipmentSlot hand) {
 		return player.getPlayer().getInventory().getItem(hand);
