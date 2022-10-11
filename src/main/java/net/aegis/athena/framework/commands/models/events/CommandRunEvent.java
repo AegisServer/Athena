@@ -1,25 +1,22 @@
 package net.aegis.athena.framework.commands.models.events;
 
-import gg.projecteden.api.common.exceptions.EdenException;
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.Commands;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.exceptions.NexusException;
-import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.aegis.athena.Athena;
+import net.aegis.athena.framework.commands.Commands;
 import net.aegis.athena.framework.commands.models.CustomCommand;
+import net.aegis.athena.framework.commands.models.annotations.Description;
+import net.aegis.athena.framework.commands.models.annotations.Path;
+import net.aegis.athena.framework.exceptions.AthenaException;
+import net.aegis.athena.framework.exceptions.preconfigured.MissingArgumentException;
+import net.aegis.athena.utils.JsonBuilder;
 import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static net.aegis.athena.utils.Nullables.isNullOrEmpty;
 
 @Data
 @RequiredArgsConstructor
@@ -48,7 +45,7 @@ public class CommandRunEvent extends CommandEvent {
 
 	public void handleException(Throwable ex) {
 		if (Athena.isDebug()) {
-			Nexus.debug("Handling command framework exception for " + getSender().getName());
+			Athena.debug("Handling command framework exception for " + getSender().getName());
 			ex.printStackTrace();
 		}
 
@@ -61,22 +58,22 @@ public class CommandRunEvent extends CommandEvent {
 			return;
 		}
 
-		if (ex.getCause() != null && ex.getCause() instanceof NexusException nexusException) {
+		if (ex.getCause() != null && ex.getCause() instanceof AthenaException nexusException) {
 			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
 			return;
 		}
 
-		if (ex instanceof NexusException nexusException) {
-			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
+		if (ex instanceof AthenaException athenaException) {
+			reply(new JsonBuilder(PREFIX + "&c").next(athenaException.getJson()));
 			return;
 		}
 
-		if (ex.getCause() != null && ex.getCause() instanceof EdenException edenException) {
+		if (ex.getCause() != null && ex.getCause() instanceof AthenaException edenException) {
 			reply(PREFIX + "&c" + edenException.getMessage());
 			return;
 		}
 
-		if (ex instanceof EdenException) {
+		if (ex instanceof AthenaException) {
 			reply(PREFIX + "&c" + ex.getMessage());
 			return;
 		}
