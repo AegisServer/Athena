@@ -1,6 +1,6 @@
 package net.aegis.athena.framework.commands.models.annotations;
 
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import net.aegis.athena.utils.TimeUtils.TickTime;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

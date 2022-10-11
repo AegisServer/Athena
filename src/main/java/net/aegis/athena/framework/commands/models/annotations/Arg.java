@@ -1,8 +1,5 @@
 package net.aegis.athena.framework.commands.models.annotations;
 
-import gg.projecteden.nexus.features.minigames.models.Arena;
-import gg.projecteden.nexus.features.minigames.models.Team;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,7 +25,7 @@ public @interface Arg {
 	 */
 	String permission() default "";
 
-	/**
+	/*
 	 * For arguments which require more context, like {@link gg.projecteden.nexus.features.minigames.models.Team}, you must
 	 * set this value to point to the argument which provides the required context.
 	 * <p>
