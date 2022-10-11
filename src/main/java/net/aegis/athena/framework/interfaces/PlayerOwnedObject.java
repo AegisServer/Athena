@@ -2,9 +2,9 @@ package net.aegis.athena.framework.interfaces;
 
 import net.aegis.athena.Athena;
 import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import net.aegis.athena.framework.persistence.mongodb.models.nickname.Nickname;
+import net.aegis.athena.framework.persistence.mongodb.models.nickname.NicknameService;
 import net.aegis.athena.utils.*;
-import net.aegis.athena.utils.location.HasLocation;
-import net.aegis.athena.utils.location.OptionalLocation;
 import net.aegis.athena.utils.location.OptionalPlayerLike;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-import static net.aegis.athena.utils.Distance.distance;
 import static net.aegis.athena.utils.Nullables.isNullOrEmpty;
 import static net.aegis.athena.utils.UUIDUtils.isUUID0;
 
@@ -90,45 +89,45 @@ public interface PlayerOwnedObject extends net.aegis.athena.framework.persistenc
 		return isUUID0(getUuid());
 	}
 
-	default boolean isAfk() {
-		return AFK.get(getOnlinePlayer()).isAfk();
-	}
+//	default boolean isAfk() {
+//		return AFK.get(getOnlinePlayer()).isAfk();
+//	}
+//
+//	default boolean isTimeAfk() {
+//		return AFK.get(getOnlinePlayer()).isTimeAfk();
+//	}
+//
+//	default @NotNull Nerd getNerd() {
+//		return Nerd.of(this);
+//	}
+//
+//	default @NotNull Rank getRank() {
+//		return Rank.of(this);
+//	}
+//
+//	default @NotNull Nerd getOnlineNerd() {
+//		return Nerd.of(getOnlinePlayer());
+//	}
+//
+//	default @NotNull WorldGroup getWorldGroup() {
+//		return getOnlineNerd().getWorldGroup();
+//	}
 
-	default boolean isTimeAfk() {
-		return AFK.get(getOnlinePlayer()).isTimeAfk();
-	}
-
-	default @NotNull Nerd getNerd() {
-		return Nerd.of(this);
-	}
-
-	default @NotNull Rank getRank() {
-		return Rank.of(this);
-	}
-
-	default @NotNull Nerd getOnlineNerd() {
-		return Nerd.of(getOnlinePlayer());
-	}
-
-	default @NotNull WorldGroup getWorldGroup() {
-		return getOnlineNerd().getWorldGroup();
-	}
-
-	default Distance distanceTo(HasLocation location) {
-		return distance(getOnlinePlayer(), location);
-	}
-
-	default Distance distanceTo(OptionalLocation location) {
-		return distance(getOnlinePlayer(), location);
-	}
-
-	@Override
-	default @NotNull String getName() {
-		String name = Name.of(this);
-		if (name == null)
-			name = Nerd.of(getUuid()).getName();
-		return name;
-	}
+//	default Distance distanceTo(HasLocation location) {
+//		return distance(getOnlinePlayer(), location);
+//	}
+//
+//	default Distance distanceTo(OptionalLocation location) {
+//		return distance(getOnlinePlayer(), location);
+//	}
+//
+//	@Override
+//	default @NotNull String getName() {
+//		String name = Name.of(this);
+//		if (name == null)
+//			name = Nerd.of(getUuid()).getName();
+//		return name;
+//	}
 
 	@Override
 	default @NotNull String getNickname() {
