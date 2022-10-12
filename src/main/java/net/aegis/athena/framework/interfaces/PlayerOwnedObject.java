@@ -2,9 +2,13 @@ package net.aegis.athena.framework.interfaces;
 
 import net.aegis.athena.Athena;
 import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import net.aegis.athena.framework.persistence.mongodb.models.nickname.Nickname;
-import net.aegis.athena.framework.persistence.mongodb.models.nickname.NicknameService;
+import net.aegis.athena.models.nickname.Nickname;
+import net.aegis.athena.models.nickname.NicknameService;
+import net.aegis.athena.models.nerd.Nerd;
+import net.aegis.athena.models.nerd.Rank;
 import net.aegis.athena.utils.*;
+import net.aegis.athena.utils.location.HasLocation;
+import net.aegis.athena.utils.location.OptionalLocation;
 import net.aegis.athena.utils.location.OptionalPlayerLike;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
@@ -18,17 +22,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
+import static net.aegis.athena.utils.Distance.distance;
 import static net.aegis.athena.utils.Nullables.isNullOrEmpty;
 import static net.aegis.athena.utils.UUIDUtils.isUUID0;
 
 /**
  * A mongo database object owned by a player
  */
-public interface PlayerOwnedObject extends net.aegis.athena.framework.persistence.mongodb.interfaces.PlayerOwnedObject, OptionalPlayerLike {
+public interface PlayerOwnedObject extends OptionalPlayerLike, DatabaseObject, Nicknamed {
 
 	@NotNull UUID getUuid();
 
-	/**
+	/*
 	 * Gets the unique ID of this object. Alias for {@link #getUuid()}, for compatibility with {@link HasUniqueId}.
 	 *
 	 * @return this object's unique ID
@@ -97,45 +102,43 @@ public interface PlayerOwnedObject extends net.aegis.athena.framework.persistenc
 //		return AFK.get(getOnlinePlayer()).isTimeAfk();
 //	}
 //
-//	default @NotNull Nerd getNerd() {
-//		return Nerd.of(this);
-//	}
-//
-//	default @NotNull Rank getRank() {
-//		return Rank.of(this);
-//	}
-//
-//	default @NotNull Nerd getOnlineNerd() {
-//		return Nerd.of(getOnlinePlayer());
-//	}
-//
+	default @NotNull Nerd getNerd() {
+		return Nerd.of(this);
+	}
+
+	default @NotNull Rank getRank() {
+		return Rank.of(this);
+	}
+
+	default @NotNull Nerd getOnlineNerd() {
+		return Nerd.of(getOnlinePlayer());
+	}
+
 //	default @NotNull WorldGroup getWorldGroup() {
 //		return getOnlineNerd().getWorldGroup();
 //	}
 
-//	default Distance distanceTo(HasLocation location) {
-//		return distance(getOnlinePlayer(), location);
-//	}
-//
-//	default Distance distanceTo(OptionalLocation location) {
-//		return distance(getOnlinePlayer(), location);
-//	}
-//
-//	@Override
-//	default @NotNull String getName() {
-//		String name = Name.of(this);
-//		if (name == null)
-//			name = Nerd.of(getUuid()).getName();
-//		return name;
-//	}
+	default Distance distanceTo(HasLocation location) {
+		return distance((HasLocation) getOnlinePlayer(), location);
+	}
 
-	@Override
+	default Distance distanceTo(OptionalLocation location) {
+		return distance((HasLocation) getOnlinePlayer(), location);
+	}
+
+	default @NotNull String getName() {
+		String name = Name.of(this);
+		if (name == null)
+			name = Nerd.of(getUuid()).getName();
+		return name;
+	}
+
 	default @NotNull String getNickname() {
-		return Nickname.of(this);
+		return Nickname.of(getUuid());
 	}
 
 	default Nickname getNicknameData() {
-		return new NicknameService().get(this.getUuid());
+		return new NicknameService().get(getUuid());
 	}
 
 	default boolean hasNickname() {
@@ -150,6 +153,10 @@ public interface PlayerOwnedObject extends net.aegis.athena.framework.persistenc
 	default void debug(ComponentLike message) {
 		if (Athena.isDebug())
 			sendMessage(message);
+	}
+
+	default String toPrettyString() {
+		return StringUtils.toPrettyString(this);
 	}
 
 	default void sendMessage(String message) {

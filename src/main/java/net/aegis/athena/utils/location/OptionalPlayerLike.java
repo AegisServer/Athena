@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public interface OptionalPlayerLike extends OptionalPlayer, net.aegis.athena.framework.interfaces.HasUniqueId, HasOfflinePlayer, OptionalLocation, Identified, ForwardingAudience.Single {
+public interface OptionalPlayerLike extends HasOfflinePlayer, OptionalLocation, Identified, ForwardingAudience.Single {
 	/**
 	 * Gets the identity associated with this object
 	 *

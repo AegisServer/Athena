@@ -1,6 +1,5 @@
 package net.aegis.athena.framework.persistence.mongodb;
 
-import net.aegis.athena.framework.interfaces.HasUniqueId;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import net.aegis.athena.utils.PlayerUtils.OnlinePlayers;
 import org.bukkit.entity.Player;

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public abstract class API {
+public class API {
 
 	protected static API instance;
 
@@ -23,10 +23,12 @@ public abstract class API {
 		return instance;
 	}
 
-	abstract public Env getEnv();
+	public Env getEnv() {
+		return Athena.getEnv();
+	}
 
 	public ClassLoader getClassLoader() {
-		return null;
+		return Athena.class.getClassLoader();
 	}
 
 	public GsonBuilder getPrettyPrinter() {

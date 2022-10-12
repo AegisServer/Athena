@@ -14,12 +14,14 @@ import lombok.SneakyThrows;
 import net.aegis.athena.API;
 import net.aegis.athena.framework.exceptions.AthenaException;
 import net.aegis.athena.framework.interfaces.DatabaseObject;
-import net.aegis.athena.framework.interfaces.HasUniqueId;
+import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import net.aegis.athena.framework.persistence.mongodb.annotations.ObjectClass;
 import net.aegis.athena.utils.Log;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
@@ -167,8 +169,16 @@ public abstract class MongoService<T extends DatabaseObject> {
 		return get(UUID.fromString(name));
 	}
 
-	public T get(HasUniqueId object) {
+	public T get(Player player) {
+		return get(player.getUniqueId());
+	}
+
+	public T get(PlayerOwnedObject object) {
 		return get(object.getUniqueId());
+	}
+
+	public T get(OfflinePlayer player) {
+		return get(player.getUniqueId());
 	}
 
 	@NotNull
@@ -188,10 +198,6 @@ public abstract class MongoService<T extends DatabaseObject> {
 	}
 
 	public void edit(String uuid, Consumer<T> consumer) {
-		edit(get(uuid), consumer);
-	}
-
-	public void edit(HasUniqueId uuid, Consumer<T> consumer) {
 		edit(get(uuid), consumer);
 	}
 

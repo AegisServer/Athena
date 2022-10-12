@@ -1,13 +1,15 @@
-package net.aegis.athena.framework.persistence.mongodb.models.nickname;
+package net.aegis.athena.models.nickname;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.converters.UUIDConverter;
 import lombok.*;
-import net.aegis.athena.framework.interfaces.HasUniqueId;
-import net.aegis.athena.framework.persistence.mongodb.interfaces.PlayerOwnedObject;
+import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
+import net.aegis.athena.models.nerd.Nerd;
 import net.aegis.athena.utils.UUIDUtils;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -29,11 +31,23 @@ public class Nickname implements PlayerOwnedObject {
 	protected String nickname;
 
 	public static String of(String name) {
-		return new NicknameService().get(name).getNickname();
+		return of(UUID.fromString(name));
 	}
 
-	public static String of(HasUniqueId player) {
-		return new NicknameService().get(player).getNickname();
+	public static String of(Player player) {
+		return of(player.getUniqueId());
+	}
+
+	public static String of(PlayerOwnedObject object) {
+		return of(object.getUniqueId());
+	}
+
+	public static String of(OfflinePlayer player) {
+		return of(player.getUniqueId());
+	}
+
+	public static String of(Nerd nerd) {
+		return of(nerd.getUniqueId());
 	}
 
 	public static String of(UUID uuid) {

@@ -2,7 +2,6 @@ package net.aegis.athena.utils;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Builder;
-import net.aegis.athena.framework.interfaces.HasUniqueId;
 import net.aegis.athena.hooks.Hook;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
@@ -11,20 +10,14 @@ import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static net.aegis.athena.utils.PlayerUtils.runCommandAsConsole;
 

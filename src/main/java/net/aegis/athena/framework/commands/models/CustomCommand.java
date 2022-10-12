@@ -6,20 +6,15 @@ import net.aegis.athena.framework.commands.models.annotations.*;
 import net.aegis.athena.framework.commands.models.events.CommandEvent;
 import net.aegis.athena.framework.commands.models.events.CommandRunEvent;
 import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
-import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotFoundException;
 import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import net.aegis.athena.framework.exceptions.preconfigured.MustBeCommandBlockException;
 import net.aegis.athena.framework.exceptions.preconfigured.MustBeConsoleException;
 import net.aegis.athena.framework.exceptions.preconfigured.MustBeIngameException;
 import net.aegis.athena.framework.exceptions.preconfigured.NoPermissionException;
-import net.aegis.athena.framework.interfaces.HasUniqueId;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
-import net.aegis.athena.framework.persistence.mongodb.models.nerd.Nerd;
-import net.aegis.athena.framework.persistence.mongodb.models.nerd.NerdService;
-import net.aegis.athena.framework.persistence.mongodb.models.nickname.Nickname;
+import net.aegis.athena.models.nickname.Nickname;
 import net.aegis.athena.utils.*;
-import net.aegis.athena.utils.PlayerUtils.OnlinePlayers;
 import net.aegis.athena.utils.SerializationUtils.Json;
 import net.aegis.athena.utils.TimeUtils.Timespan;
 import net.aegis.athena.utils.location.HasLocation;
@@ -52,7 +47,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -359,7 +353,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected Nerd nerd() {
-		return Nerd.of((HasUniqueId) player());
+		return Nerd.of(player().getUniqueId());
 	}
 
 	protected @NotNull UUID uuid() {
@@ -379,15 +373,15 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (!isPlayer())
 			return sender().getName();
 		else
-			return Nickname.of((HasUniqueId) player());
+			return Nickname.of(player().getUniqueId());
 	}
 
 	protected String nickname(OfflinePlayer player) {
-		return Nickname.of((HasUniqueId) player);
+		return Nickname.of(player.getUniqueId());
 	}
 
 	protected String nickname(PlayerOwnedObject player) {
-		return Nickname.of(player);
+		return Nickname.of(player.getUniqueId());
 	}
 
 	protected ConsoleCommandSender console() {
@@ -623,7 +617,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (service != null) {
 			final OfflinePlayer player = convertToOfflinePlayer(value);
 			if (player != null)
-				return (PlayerOwnedObject) service.newInstance().get((HasUniqueId) player);
+				return (PlayerOwnedObject) service.newInstance().get(player.getUniqueId());
 		}
 		return null;
 	}
@@ -638,9 +632,9 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	public Player convertToPlayer(OfflinePlayer offlinePlayer) {
 		if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
-			throw new PlayerNotOnlineException((HasUniqueId) offlinePlayer);
+			throw new PlayerNotOnlineException(offlinePlayer);
 		if (isPlayer() && !PlayerUtils.canSee(player(), offlinePlayer.getPlayer()))
-			throw new PlayerNotOnlineException((HasUniqueId) offlinePlayer);
+			throw new PlayerNotOnlineException(offlinePlayer);
 
 		return offlinePlayer.getPlayer();
 	}
@@ -933,7 +927,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		public String format() {
 			boolean self = isSelf(this.self, target);
-			String name = Objects.requireNonNullElse(Nickname.of((HasUniqueId) target), "Unknown");
+			String name = Objects.requireNonNullElse(Nickname.of(target), "Unknown");
 
 			if (whoType == WhoType.POSSESSIVE_UPPER || whoType == WhoType.POSSESSIVE_LOWER)
 				return self ? (whoType == WhoType.POSSESSIVE_UPPER ? "Y" : "y") + "our" : name + "'" + (name.endsWith("s") ? "" : "s");

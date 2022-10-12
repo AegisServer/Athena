@@ -18,6 +18,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiPredicate;
@@ -313,6 +317,26 @@ public class Utils {
 		} catch (Exception ex) {
 			return false;
 		}
+	}
+
+	public static LocalDateTime epochSecond(String timestamp) {
+		// try catch for MinecraftServers.Biz giving timestamp instead of epoch second
+		try {
+			return epochSecond(Long.parseLong(timestamp));
+		} catch (NumberFormatException ex) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss xxxx");
+			return LocalDateTime.parse(timestamp, formatter);
+		}
+	}
+
+	public static LocalDateTime epochSecond(long timestamp) {
+		return epochMilli(String.valueOf(timestamp).length() == 13 ? timestamp : timestamp * 1000);
+	}
+
+	public static LocalDateTime epochMilli(long timestamp) {
+		return Instant.ofEpochMilli(timestamp)
+				.atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
 	}
 
 	public static boolean canEnable(Class<?> clazz) {

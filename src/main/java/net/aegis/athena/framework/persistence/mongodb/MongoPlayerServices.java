@@ -1,9 +1,9 @@
 package net.aegis.athena.framework.persistence.mongodb;
 
 import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotFoundException;
-import net.aegis.athena.framework.persistence.mongodb.interfaces.PlayerOwnedObject;
-import net.aegis.athena.framework.persistence.mongodb.models.nerd.Nerd;
-import net.aegis.athena.framework.persistence.mongodb.models.nerd.NerdService;
+import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
+import net.aegis.athena.models.nerd.Nerd;
+import net.aegis.athena.models.nerd.NerdService;
 import net.aegis.athena.utils.UUIDUtils;
 
 import java.util.UUID;

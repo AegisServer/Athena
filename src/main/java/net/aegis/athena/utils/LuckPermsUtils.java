@@ -2,7 +2,7 @@ package net.aegis.athena.utils;
 
 import lombok.*;
 import net.aegis.athena.Athena;
-import net.aegis.athena.framework.interfaces.HasUniqueId;
+import net.aegis.athena.models.nerd.Rank;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextSet;
@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
+
+import static net.aegis.athena.utils.Nullables.isNullOrEmpty;
 
 public class LuckPermsUtils {
 
@@ -60,10 +62,10 @@ public class LuckPermsUtils {
 		return getUser(player.getUniqueId());
 	}
 
-//	@NotNull
-//	public static Group getGroup(@NotNull Rank rank) {
-//		return getGroup(rank.name());
-//	}
+	@NotNull
+	public static Group getGroup(@NotNull Rank rank) {
+		return getGroup(rank.name());
+	}
 
 	@NotNull
 	public static Group getGroup(@NotNull String groupName) {
@@ -176,17 +178,17 @@ public class LuckPermsUtils {
 		return getUser(uuid).data().toCollection();
 	}
 
-//	public static CompletableFuture<List<UUID>> getUsersInGroup(Rank rank) {
-//		var matcher = NodeMatcher.key(InheritanceNode.builder(getGroup(rank)).build());
-//		var search = Athena.getLuckPerms().getUserManager().searchAll(matcher);
-//
-//		CompletableFuture<List<UUID>> future = new CompletableFuture<>();
-//
-//		search.thenAccept(map -> future.complete(map.keySet().stream()
-//			.toList()));
-//
-//		return future;
-//	}
+	public static CompletableFuture<List<UUID>> getUsersInGroup(Rank rank) {
+		var matcher = NodeMatcher.key(InheritanceNode.builder(getGroup(rank)).build());
+		var search = Athena.getLuckPerms().getUserManager().searchAll(matcher);
+
+		CompletableFuture<List<UUID>> future = new CompletableFuture<>();
+
+		search.thenAccept(map -> future.complete(map.keySet().stream()
+				.toList()));
+
+		return future;
+	}
 
 	private static final List<ContextCalculator<?>> contextCalculators = new ArrayList<>();
 
@@ -257,7 +259,7 @@ public class LuckPermsUtils {
 			}
 
 			public PermissionChangeBuilder world(String world) {
-				if (!Nullables.isNullOrEmpty(world))
+				if (!isNullOrEmpty(world))
 					this.world = Bukkit.getWorld(world);
 				return this;
 			}
@@ -335,36 +337,36 @@ public class LuckPermsUtils {
 				return this;
 			}
 
-//			public GroupChangeBuilder group(Rank group) {
-//				return group(group.name());
-//			}
+			public GroupChangeBuilder group(Rank group) {
+				return group(group.name());
+			}
 
 			public GroupChangeBuilder group(String group) {
 				return groups(group);
 			}
 
-//			public GroupChangeBuilder groups(Rank... groups) {
-//				return groups(Arrays.stream(groups).map(Rank::name).toArray(String[]::new));
-//			}
+			public GroupChangeBuilder groups(Rank... groups) {
+				return groups(Arrays.stream(groups).map(Rank::name).toArray(String[]::new));
+			}
 
 			public GroupChangeBuilder groups(String... groups) {
 				this.groups = Arrays.asList(groups);
 				return this;
 			}
 
-//			@SneakyThrows
-//			public CompletableFuture<Void> runAsync() {
-//				final Rank oldRank = Rank.of(uuid);
-//				return modifyGroups().thenRunAsync(() -> {
-//					Rank.CACHE.refresh(uuid);
-//
-//					final Rank newRank = Rank.of(uuid);
-//					if (oldRank == newRank)
-//						return;
-//
-//					new PlayerRankChangeEvent(uuid, oldRank, newRank).callEvent();
-//				});
-//			}
+			@SneakyThrows
+			public CompletableFuture<Void> runAsync() {
+				final Rank oldRank = Rank.of(uuid);
+				return modifyGroups().thenRunAsync(() -> {
+					Rank.CACHE.refresh(uuid);
+
+					final Rank newRank = Rank.of(uuid);
+					if (oldRank == newRank)
+						return;
+
+					new PlayerRankChangeEvent(uuid, oldRank, newRank).callEvent();
+				});
+			}
 
 			private CompletableFuture<Void> modifyGroups() {
 				List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -372,8 +374,8 @@ public class LuckPermsUtils {
 					futures.add(userManager().modifyUser(uuid, user -> {
 						final Group group = getGroup(groupName);
 
-//						if (type == GroupChangeType.SET)
-//							user.data().clear(node -> Rank.exists(node.getKey().replace("group.", "")));
+						if (type == GroupChangeType.SET)
+							user.data().clear(node -> Rank.exists(node.getKey().replace("group.", "")));
 
 						Node node = InheritanceNode.builder(group).build();
 						type.consumer.accept(user.data(), node);
@@ -384,29 +386,29 @@ public class LuckPermsUtils {
 
 		}
 
-//		@Getter
-//		public static class PlayerRankChangeEvent extends Event {
-//			private static final HandlerList handlers = new HandlerList();
-//			private final UUID uuid;
-//			private final Rank oldRank;
-//			private final Rank newRank;
-//
-//			public PlayerRankChangeEvent(@NotNull UUID uuid, Rank oldRank, Rank newRank) {
-//				super(true);
-//				this.uuid = uuid;
-//				this.oldRank = oldRank;
-//				this.newRank = newRank;
-//			}
-//
-//			public static HandlerList getHandlerList() {
-//				return handlers;
-//			}
-//
-//			@Override
-//			public @NotNull HandlerList getHandlers() {
-//				return handlers;
-//			}
-//		}
+		@Getter
+		public static class PlayerRankChangeEvent extends Event {
+			private static final HandlerList handlers = new HandlerList();
+			private final UUID uuid;
+			private final Rank oldRank;
+			private final Rank newRank;
+
+			public PlayerRankChangeEvent(@NotNull UUID uuid, Rank oldRank, Rank newRank) {
+				super(true);
+				this.uuid = uuid;
+				this.oldRank = oldRank;
+				this.newRank = newRank;
+			}
+
+			public static HandlerList getHandlerList() {
+				return handlers;
+			}
+
+			@Override
+			public @NotNull HandlerList getHandlers() {
+				return handlers;
+			}
+		}
 	}
 
 }

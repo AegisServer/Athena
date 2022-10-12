@@ -2,32 +2,40 @@ package net.aegis.athena;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.multiverseinventories.MultiverseInventories;
+import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
+import me.lucko.spark.api.Spark;
 import net.aegis.athena.features.commands.DiscordCommand;
 import net.aegis.athena.features.commands.ShowItemCommand;
 import net.aegis.athena.features.listeners.JoinLeaveListener;
 import net.aegis.athena.features.listeners.OlympusBreakListener;
 import net.aegis.athena.features.listeners.RandomSpawnListener;
 import net.aegis.athena.features.listeners.common.TemporaryListener;
-import net.aegis.athena.utils.EnumUtils;
-import net.aegis.athena.utils.Env;
-import net.aegis.athena.utils.ReflectionUtils;
-import net.aegis.athena.utils.Utils;
+import net.aegis.athena.framework.commands.Commands;
+import net.aegis.athena.framework.features.Features;
+import net.aegis.athena.framework.persistence.mongodb.MongoService;
+import net.aegis.athena.utils.*;
+import net.aegis.athena.utils.PlayerUtils.OnlinePlayers;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +44,15 @@ import java.util.logging.Level;
 
 public final class Athena extends JavaPlugin {
 
+	@Getter
+	private Commands commands;
+	@Getter
+	private Features features;
 	private static Athena instance;
+	@Getter
+	private static Thread thread;
+	public static final LocalDateTime EPOCH = LocalDateTime.now();
+	private static API api;
 
 	private BukkitAudiences adventure;
 
@@ -45,6 +61,8 @@ public final class Athena extends JavaPlugin {
 			instance = this;
 		} else
 			Bukkit.getServer().getLogger().info("Athena could not be initialized: Instance is not null but is: " + instance.getClass().getName());
+
+		api = new API();
 	}
 
 	public static Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
@@ -166,6 +184,21 @@ public final class Athena extends JavaPlugin {
 		//register command classes
 		getCommand("discord").setExecutor(new DiscordCommand(this));
 		getCommand("showitem").setExecutor(new ShowItemCommand());
+
+		new Timer("Enable", () -> {
+			new Timer(" Cache Usernames", () -> OnlinePlayers.getAll().forEach(Name::of));
+			new Timer(" Config", this::setupConfig);
+			new Timer(" Hooks", this::hooks);
+			new Timer(" Features", () -> {
+				features = new Features(this, "net.aegis.athena.features");
+				features.registerAll();
+			});
+			new Timer(" Commands", () -> {
+				commands = new Commands(this, "net.aegis.athena.features");
+				commands.registerAll();
+			});
+		});
+
 		//end of command registry
 
 		//kyori adventure registry
@@ -185,10 +218,47 @@ public final class Athena extends JavaPlugin {
 		}
 		//end of kyori adventure
 
+		List<Runnable> tasks = List.of(
+				() -> { PlayerUtils.runCommandAsConsole("save-all"); },
+				() -> { if (cron.isStarted()) cron.stop(); },
+				() -> { if (commands != null) commands.unregisterAll(); },
+				() -> { Bukkit.getServicesManager().unregisterAll(this); },
+				() -> { LuckPermsUtils.shutdown(); }
+		);
+
+	}
+
+	private void setupConfig() {
+		if (!Athena.getInstance().getDataFolder().exists())
+			Athena.getInstance().getDataFolder().mkdir();
+
+		FileConfiguration config = getInstance().getConfig();
+
+		addConfigDefault("env", "dev");
+
+		config.options().copyDefaults(true);
+		saveConfig();
+	}
+
+	public void addConfigDefault(String path, Object value) {
+		FileConfiguration config = getInstance().getConfig();
+		config.addDefault(path, value);
+
+		config.options().copyDefaults(true);
+		saveConfig();
 	}
 
 	@Getter
+	// http://www.sauronsoftware.it/projects/cron4j/manual.php
+	private static final Scheduler cron = new Scheduler();
+	@Getter
+	private static MultiverseCore multiverseCore;
+	@Getter
+	private static MultiverseInventories multiverseInventories;
+	@Getter
 	private static LuckPerms luckPerms = null;
+	@Getter
+	private static Spark spark = null;
 
 	@Getter
 	@Setter
@@ -230,4 +300,17 @@ public final class Athena extends JavaPlugin {
 	public static void log(Level level, String message, Throwable ex) {
 		getInstance().getLogger().log(level, ChatColor.stripColor(message), ex);
 	}
+
+	private void hooks() {
+		multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
+		multiverseInventories = (MultiverseInventories) Bukkit.getPluginManager().getPlugin("Multiverse-Inventories");
+		cron.start();
+		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+		if (lpProvider != null)
+			luckPerms = lpProvider.getProvider();
+		RegisteredServiceProvider<Spark> sparkProvider = Bukkit.getServicesManager().getRegistration(Spark.class);
+		if (sparkProvider != null)
+			spark = sparkProvider.getProvider();
+	}
+
 }

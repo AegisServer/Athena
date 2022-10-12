@@ -1,4 +1,4 @@
-package net.aegis.athena.framework.persistence.mongodb.models.hours;
+package net.aegis.athena.models.hours;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.AggregateIterable;
@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.ToString;
 import net.aegis.athena.framework.exceptions.AthenaException;
-import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
 import net.aegis.athena.framework.persistence.mongodb.MongoPlayerServices;
 import net.aegis.athena.framework.persistence.mongodb.annotations.ObjectClass;
 import net.aegis.athena.framework.persistence.mongodb.interfaces.PlayerOwnedObject;

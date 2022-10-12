@@ -1,4 +1,4 @@
-package net.aegis.athena.framework.persistence.mongodb.models.hours;
+package net.aegis.athena.models.hours;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;

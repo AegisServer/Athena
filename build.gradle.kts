@@ -43,6 +43,14 @@ repositories {
     maven {
         url = uri("https://repo.maven.apache.org/maven2/")
     }
+    maven {
+        url = uri("https://repo.onarandombox.com/content/groups/public/")}
+    maven {
+        url = uri("https://mvnrepository.com/artifact/org.apache.commons/commons-collections4")
+    }
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
@@ -55,11 +63,18 @@ dependencies {
     implementation("org.objenesis:objenesis:3.2")
     implementation("io.github.classgraph:classgraph:4.8.149")
     implementation("dev.morphia.morphia:core:1.6.1")
+    implementation("org.apache.commons:commons-collections4:4.4")
+    implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
     compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.10.0")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.7")
+    compileOnly("com.onarandombox.multiversecore:Multiverse-Core:4.3.1")
+    compileOnly("com.onarandombox.multiverseinventories:Multiverse-Inventories:4.2.3")
+    compileOnly("me.lucko:helper:5.6.13")
+    compileOnly("me.lucko:spark-api:0.1-SNAPSHOT")
+    compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
 }
 
 group = "net.aegis"

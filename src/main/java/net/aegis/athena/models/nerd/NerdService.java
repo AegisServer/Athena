@@ -1,12 +1,13 @@
-package net.aegis.athena.framework.persistence.mongodb.models.nerd;
+package net.aegis.athena.models.nerd;
 
 import dev.morphia.query.Query;
 import net.aegis.athena.framework.exceptions.AthenaException;
+import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
 import net.aegis.athena.framework.persistence.mongodb.MongoPlayerServices;
 import net.aegis.athena.framework.persistence.mongodb.annotations.ObjectClass;
-import net.aegis.athena.framework.persistence.mongodb.models.hours.HoursService;
-import net.aegis.athena.framework.persistence.mongodb.models.nickname.Nickname;
-import net.aegis.athena.framework.persistence.mongodb.models.nickname.NicknameService;
+import net.aegis.athena.models.hours.HoursService;
+import net.aegis.athena.models.nickname.Nickname;
+import net.aegis.athena.models.nickname.NicknameService;
 import net.aegis.athena.utils.Utils;
 
 import java.util.*;
@@ -48,7 +49,7 @@ public class NerdService extends MongoPlayerServices<Nerd> {
 		if (nerd == null) {
 			Nickname fromNickname = new NicknameService().getFromNickname(name);
 			if (fromNickname != null)
-				nerd = fromNickname.getNerd();
+				nerd = Nerd.of(fromNickname);
 		}
 
 		return nerd;

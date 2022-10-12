@@ -488,18 +488,18 @@ public class JsonBuilder implements ComponentLike {
 	 * Adds a new line and creates a new {@link #group()}
 	 * @return this builder
 	 */
-	/*
+
 	@NotNull @Contract("-> this")
 	public JsonBuilder newline() {
 		return newline(false);
 	}
-	 */
+
 
 	/*
 	 * Adds a new line and optionally creates a new {@link #group()}
 	 * @return this builder
 	 */
-	/*
+
 	@NotNull @Contract("_ -> this")
 	public JsonBuilder newline(boolean newGroup) {
 		builder.append(Component.text(System.lineSeparator()));
@@ -507,19 +507,19 @@ public class JsonBuilder implements ComponentLike {
 			group();
 		return this;
 	}
-	 */
+
 
 	/*
 	 * Creates an empty line (2x {@link #newline()})
 	 */
-	/*
+
 	@NotNull @Contract("-> this")
 	public JsonBuilder line() {
 		newline();
 		newline();
 		return this;
 	}
-	 */
+
 
 	/**
 	 * Sets the color for the internal builder

@@ -5,14 +5,15 @@ import de.tr7zw.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
 import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
 import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotFoundException;
-import net.aegis.athena.framework.interfaces.HasUniqueId;
-import net.aegis.athena.framework.persistence.mongodb.models.nerd.Nerd;
-import net.aegis.athena.framework.persistence.mongodb.models.nerd.NerdService;
-import net.aegis.athena.framework.persistence.mongodb.models.nickname.Nickname;
-import net.aegis.athena.framework.persistence.mongodb.models.nickname.NicknameService;
+import net.aegis.athena.models.nerd.Nerd;
+import net.aegis.athena.models.nerd.NerdService;
+import net.aegis.athena.models.nickname.Nickname;
+import net.aegis.athena.models.nickname.NicknameService;
+import net.aegis.athena.models.nerd.Rank;
 import net.aegis.athena.utils.location.HasOfflinePlayer;
 import net.aegis.athena.utils.location.HasPlayer;
 import net.aegis.athena.utils.location.OptionalPlayer;
+import net.aegis.athena.utils.worldgroup.WorldGroup;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
@@ -38,16 +39,81 @@ import static net.aegis.athena.utils.UUIDUtils.isUuid;
 
 public class PlayerUtils {
 
+	public static List<UUID> uuidsOf(Collection<Player> players) {
+		return players.stream().map(Player::getUniqueId).toList();
+	}
+
 	public static @NotNull OfflinePlayer getPlayer(UUID uuid) {
 		return Bukkit.getOfflinePlayer(uuid);
 	}
 
-	public static @NotNull OfflinePlayer getPlayer(HasUniqueId uuid) {
+	public static @NotNull OfflinePlayer getPlayer(Player uuid) {
 		return getPlayer(uuid.getUniqueId());
 	}
 
 	public static @NotNull OfflinePlayer getPlayer(Identity identity) {
 		return getPlayer(identity.uuid());
+	}
+
+	/**
+	 * Searches for a player whose username or nickname fully or partially matches the given partial name.
+	 * @param partialName UUID or partial text of a username/nickname
+	 * @return an offline player
+	 * @throws InvalidInputException input was null or empty
+	 * @throws PlayerNotFoundException a player matching that (nick)name could not be found
+	 */
+	public static @NotNull OfflinePlayer getPlayer(String partialName) throws InvalidInputException, PlayerNotFoundException {
+		if (partialName == null || partialName.length() == 0)
+			throw new InvalidInputException("No player name given");
+
+		String original = partialName;
+		partialName = partialName.toLowerCase().trim();
+
+		if (isUuid(partialName))
+			return getPlayer(UUID.fromString(partialName));
+
+		final List<Player> players = OnlinePlayers.getAll();
+
+		for (Player player : players)
+			if (player.getName().equalsIgnoreCase(partialName))
+				return player;
+		for (Player player : players)
+			if (Nickname.of(player).equalsIgnoreCase((partialName)))
+				return player;
+
+		NicknameService nicknameService = new NicknameService();
+		Nickname fromNickname = nicknameService.getFromNickname(partialName);
+//		if (fromNickname != null)
+//			return fromNickname.getOfflinePlayer();
+
+		for (Player player : players)
+			if (player.getName().toLowerCase().startsWith(partialName))
+				return player;
+		for (Player player : players)
+			if (Nickname.of(player).toLowerCase().startsWith((partialName)))
+				return player;
+
+		for (Player player : players)
+			if (player.getName().toLowerCase().contains((partialName)))
+				return player;
+		for (Player player : players)
+			if (Nickname.of(player).toLowerCase().contains((partialName)))
+				return player;
+
+		NerdService nerdService = new NerdService();
+
+		Nerd fromAlias = nerdService.getFromAlias(partialName);
+//		if (fromAlias != null)
+//			return fromAlias.getOfflinePlayer();
+
+		List<Nerd> matches = nerdService.find(partialName);
+		if (matches.size() > 0) {
+			Nerd nerd = matches.get(0);
+//			if (nerd != null)
+//				return nerd.getOfflinePlayer();
+		}
+
+		throw new PlayerNotFoundException(original);
 	}
 
 	public static void send(@Nullable Object recipient, @Nullable Object message, @NotNull Object... objects) {
@@ -86,13 +152,13 @@ public class PlayerUtils {
 	public static class OnlinePlayers {
 		private UUID viewer;
 		private World world;
-//		private WorldGroup worldGroup;
+		private WorldGroup worldGroup;
 		private String region;
 		private Location origin;
 		private Double radius;
 		private Boolean afk;
 		private Boolean vanished;
-//		private Predicate<Rank> rank;
+		private Predicate<Rank> rank;
 		private String permission;
 		private List<UUID> include;
 		private List<UUID> exclude;
@@ -106,7 +172,7 @@ public class PlayerUtils {
 			return where().get();
 		}
 
-		public OnlinePlayers viewer(HasUniqueId player) {
+		public OnlinePlayers viewer(Player player) {
 			this.viewer = player.getUniqueId();
 			return this;
 		}
@@ -120,10 +186,10 @@ public class PlayerUtils {
 			return this;
 		}
 
-//		public OnlinePlayers worldGroup(WorldGroup worldGroup) {
-//			this.worldGroup = worldGroup;
-//			return this;
-//		}
+		public OnlinePlayers worldGroup(WorldGroup worldGroup) {
+			this.worldGroup = worldGroup;
+			return this;
+		}
 
 		public OnlinePlayers region(String region) {
 			this.region = region;
@@ -151,22 +217,22 @@ public class PlayerUtils {
 			return this;
 		}
 
-//		public OnlinePlayers rank(Rank rank) {
-//			return rank(_rank -> _rank == rank);
-//		}
-//
-//		public OnlinePlayers rank(Predicate<Rank> rankPredicate) {
-//			this.rank = rankPredicate;
-//			return this;
-//		}
+		public OnlinePlayers rank(Rank rank) {
+			return rank(_rank -> _rank == rank);
+		}
+
+		public OnlinePlayers rank(Predicate<Rank> rankPredicate) {
+			this.rank = rankPredicate;
+			return this;
+		}
 
 		public OnlinePlayers hasPermission(String permission) {
 			this.permission = permission;
 			return this;
 		}
 
-		public OnlinePlayers includePlayers(List<HasUniqueId> players) {
-			return include(players.stream().map(HasUniqueId::getUniqueId).toList());
+		public OnlinePlayers includePlayers(List<Player> players) {
+			return include(players.stream().map(Player::getUniqueId).toList());
 		}
 
 		public OnlinePlayers include(List<UUID> uuids) {
@@ -183,11 +249,11 @@ public class PlayerUtils {
 			return exclude(viewer);
 		}
 
-		public OnlinePlayers excludePlayers(List<HasUniqueId> players) {
-			return exclude(players.stream().map(HasUniqueId::getUniqueId).toList());
+		public OnlinePlayers excludePlayers(List<Player> players) {
+			return exclude(players.stream().map(Player::getUniqueId).toList());
 		}
 
-		public OnlinePlayers exclude(HasUniqueId player) {
+		public OnlinePlayers exclude(Player player) {
 			return exclude(List.of(player.getUniqueId()));
 		}
 
