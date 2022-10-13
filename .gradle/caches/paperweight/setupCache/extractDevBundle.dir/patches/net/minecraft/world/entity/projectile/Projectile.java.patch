@@ -22,8 +22,8 @@
      public UUID ownerUUID;
      @Nullable
 @@ -29,6 +34,10 @@
-     private boolean leftOwner;
-     private boolean hasBeenShot;
+     public boolean leftOwner;
+     public boolean hasBeenShot;
  
 +    // CraftBukkit start
 +    protected boolean hitCancelled = false;

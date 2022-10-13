@@ -16,7 +16,7 @@
 -public class WanderingTrader extends AbstractVillager {
      private static final int NUMBER_OF_TRADE_OFFERS = 5;
      @Nullable
-     private BlockPos wanderTarget;
+     public BlockPos wanderTarget;
      private int despawnDelay;
 +    // Paper start - Add more WanderingTrader API
 +    public boolean canDrinkPotion = true;

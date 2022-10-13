@@ -108,5 +108,25 @@ public class CraftBee extends CraftAnimals implements Bee {
     public net.kyori.adventure.util.TriState getRollingOverride() {
         return this.getHandle().rollingOverride;
     }
+
+    @Override
+    public void setCropsGrownSincePollination(int crops) {
+        this.getHandle().numCropsGrownSincePollination = crops;
+    }
+
+    @Override
+    public int getCropsGrownSincePollination() {
+        return this.getHandle().numCropsGrownSincePollination;
+    }
+
+    @Override
+    public void setTicksSincePollination(int ticks) {
+        this.getHandle().ticksWithoutNectarSinceExitingHive = ticks;
+    }
+
+    @Override
+    public int getTicksSincePollination() {
+        return this.getHandle().ticksWithoutNectarSinceExitingHive;
+    }
     // Paper end
 }

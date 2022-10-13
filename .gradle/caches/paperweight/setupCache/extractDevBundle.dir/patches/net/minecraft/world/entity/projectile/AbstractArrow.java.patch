@@ -41,8 +41,8 @@
 -    private double baseDamage = 2.0D;
 +    private double baseDamage;
      public int knockback;
--    private SoundEvent soundEvent = this.getDefaultHitGroundSoundEvent();
-+    private SoundEvent soundEvent;
+-    public SoundEvent soundEvent = this.getDefaultHitGroundSoundEvent();
++    public SoundEvent soundEvent;
      @Nullable
      private IntOpenHashSet piercingIgnoreEntityIds;
      @Nullable

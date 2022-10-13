@@ -50,5 +50,25 @@ public class CraftPhantom extends CraftFlying implements Phantom {
     public void setShouldBurnInDay(boolean shouldBurnInDay) {
         getHandle().setShouldBurnInDay(shouldBurnInDay);
     }
+
+    @Override
+    public org.bukkit.Location getAnchorLocation() {
+        net.minecraft.core.BlockPos pos = this.getHandle().anchorPoint;
+        if (pos == null) {
+            return null;
+        }
+
+        return net.minecraft.server.MCUtil.toLocation(this.getHandle().getLevel(), pos);
+    }
+
+    @Override
+    public void setAnchorLocation(org.bukkit.Location location) {
+        net.minecraft.core.BlockPos pos = null;
+        if (location != null) {
+            pos = net.minecraft.server.MCUtil.toBlockPosition(location);
+        }
+
+        this.getHandle().anchorPoint = pos;
+    }
     // Paper end
 }

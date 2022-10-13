@@ -15,6 +15,15 @@
      private static final int MAX_STRENGTH = 5;
      private static final int VARIANTS = 4;
      private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.WHEAT, Blocks.HAY_BLOCK.asItem());
+@@ -65,7 +67,7 @@
+     @Nullable
+     private Llama caravanHead;
+     @Nullable
+-    private Llama caravanTail;
++    public Llama caravanTail; // Paper
+ 
+     public Llama(EntityType<? extends Llama> type, Level world) {
+         super(type, world);
 @@ -75,17 +77,24 @@
          return false;
      }

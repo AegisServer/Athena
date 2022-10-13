@@ -21,5 +21,31 @@ public abstract class AbstractProjectile extends CraftEntity implements Projecti
     public void setBounce(boolean doesBounce) {
         this.doesBounce = doesBounce;
     }
+    // Paper start
+    @Override
+    public boolean hasLeftShooter() {
+        return this.getHandle().leftOwner;
+    }
+
+    @Override
+    public void setHasLeftShooter(boolean leftShooter) {
+        this.getHandle().leftOwner = leftShooter;
+    }
+
+    @Override
+    public boolean hasBeenShot() {
+        return this.getHandle().hasBeenShot;
+    }
+
+    @Override
+    public void setHasBeenShot(boolean beenShot) {
+        this.getHandle().hasBeenShot = beenShot;
+    }
+
+    @Override
+    public net.minecraft.world.entity.projectile.Projectile getHandle() {
+        return (net.minecraft.world.entity.projectile.Projectile) entity;
+    }
+    // Paper end
 
 }

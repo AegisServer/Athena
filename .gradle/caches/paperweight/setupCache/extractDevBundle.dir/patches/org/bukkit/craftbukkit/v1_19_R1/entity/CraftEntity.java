@@ -1301,30 +1301,42 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return getHandle().spawnReason;
     }
 
+    @Override
+    public boolean isUnderWater() {
+        return getHandle().isUnderWater();
+    }
+
+    @Override
     public boolean isInRain() {
         return getHandle().isInRain();
     }
 
+    @Override
     public boolean isInBubbleColumn() {
         return getHandle().isInBubbleColumn();
     }
 
+    @Override
     public boolean isInWaterOrRain() {
         return getHandle().isInWaterOrRain();
     }
 
+    @Override
     public boolean isInWaterOrBubbleColumn() {
         return getHandle().isInWaterOrBubble();
     }
-    
+
+    @Override
     public boolean isInWaterOrRainOrBubbleColumn() {
         return getHandle().isInWaterRainOrBubble();
     }
 
+    @Override
     public boolean isInLava() {
         return getHandle().isInLava();
     }
 
+    @Override
     public boolean isTicking() {
         return getHandle().isTicking();
     }
