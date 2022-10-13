@@ -19,7 +19,12 @@ import net.aegis.athena.utils.Tasks;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -168,7 +173,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 		private final ScoreboardUser user;
 
 		public Header(Player player) {
-			user = new ScoreboardService().get((HasUniqueId) player);
+			user = new ScoreboardService().get(player);
 		}
 
 		@Override

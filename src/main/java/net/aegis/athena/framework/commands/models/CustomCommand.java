@@ -1,8 +1,19 @@
 package net.aegis.athena.framework.commands.models;
 
 import com.google.common.base.Strings;
-import lombok.*;
-import net.aegis.athena.framework.commands.models.annotations.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import net.aegis.athena.framework.commands.models.annotations.ConverterFor;
+import net.aegis.athena.framework.commands.models.annotations.Description;
+import net.aegis.athena.framework.commands.models.annotations.Fallback;
+import net.aegis.athena.framework.commands.models.annotations.HideFromHelp;
+import net.aegis.athena.framework.commands.models.annotations.Path;
+import net.aegis.athena.framework.commands.models.annotations.Switch;
+import net.aegis.athena.framework.commands.models.annotations.TabCompleterFor;
 import net.aegis.athena.framework.commands.models.events.CommandEvent;
 import net.aegis.athena.framework.commands.models.events.CommandRunEvent;
 import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
@@ -13,17 +24,29 @@ import net.aegis.athena.framework.exceptions.preconfigured.MustBeIngameException
 import net.aegis.athena.framework.exceptions.preconfigured.NoPermissionException;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
+import net.aegis.athena.models.nerd.Nerd;
 import net.aegis.athena.models.nickname.Nickname;
-import net.aegis.athena.utils.*;
+import net.aegis.athena.utils.ColorType;
+import net.aegis.athena.utils.ItemUtils;
+import net.aegis.athena.utils.JsonBuilder;
+import net.aegis.athena.utils.MaterialTag;
+import net.aegis.athena.utils.PlayerUtils;
 import net.aegis.athena.utils.SerializationUtils.Json;
+import net.aegis.athena.utils.StringUtils;
 import net.aegis.athena.utils.TimeUtils.Timespan;
-import net.aegis.athena.utils.location.HasLocation;
+import net.aegis.athena.utils.UUIDUtils;
+import net.aegis.athena.utils.WorldGuardUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.BlockCommandSender;
@@ -44,14 +67,20 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static net.aegis.athena.utils.Distance.distance;
 import static net.aegis.athena.utils.Nullables.isNullOrAir;
 import static net.aegis.athena.utils.Nullables.isNullOrEmpty;
 import static net.aegis.athena.utils.StringUtils.an;
@@ -198,16 +227,16 @@ public abstract class CustomCommand extends ICustomCommand {
 		return player().getInventory();
 	}
 
-	protected boolean isSameWorld(HasLocation location) {
-		return world().equals(location.getLocation().getWorld());
+	protected boolean isSameWorld(Location location) {
+		return world().equals(location.getWorld());
 	}
 
 	protected boolean isSameWorld(World world) {
 		return world().equals(world);
 	}
 
-	protected boolean isDifferentWorld(HasLocation location) {
-		return !isSameWorld(location.getLocation().getWorld());
+	protected boolean isDifferentWorld(Location location) {
+		return !isSameWorld(location.getWorld());
 	}
 
 	protected boolean isDifferentWorld(World world) {
@@ -218,17 +247,17 @@ public abstract class CustomCommand extends ICustomCommand {
 		return new WorldGuardUtils(world());
 	}
 
-//	public void giveItem(ItemStack item) {
-//		PlayerUtils.giveItems(player(), Collections.singletonList(item));
-//	}
+	public void giveItem(ItemStack item) {
+		PlayerUtils.giveItems(player(), item);
+	}
 
-//	public void giveItems(ItemStack item, int amount) {
-//		giveItems(Collections.nCopies(amount, item));
-//	}
+	public void giveItems(ItemStack item, int amount) {
+		giveItems(Collections.nCopies(amount, item));
+	}
 
-//	public void giveItems(Collection<ItemStack> items) {
-//		PlayerUtils.giveItems(player(), items, null);
-//	}
+	public void giveItems(Collection<ItemStack> items) {
+		PlayerUtils.giveItems(player(), items, null);
+	}
 
 	protected void send(CommandSender sender, String message, Object... objects) {
 		send(sender, json(String.format(message, objects)));

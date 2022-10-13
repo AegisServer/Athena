@@ -1,8 +1,10 @@
-package net.aegis.athena.utils;
+package net.aegis.athena.framework.persistence.mongodb;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public abstract class Log {
 
 	public static boolean debug;
@@ -22,6 +24,10 @@ public abstract class Log {
 
 	public static void severe(String message) {
 		System.out.println("[SEVERE] " + message);
+	}
+
+	public String toString() {
+		return "Log()";
 	}
 
 }

@@ -2,18 +2,25 @@ package net.aegis.athena.framework.interfaces;
 
 import net.aegis.athena.Athena;
 import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import net.aegis.athena.models.nickname.Nickname;
-import net.aegis.athena.models.nickname.NicknameService;
 import net.aegis.athena.models.nerd.Nerd;
 import net.aegis.athena.models.nerd.Rank;
-import net.aegis.athena.utils.*;
-import net.aegis.athena.utils.location.HasLocation;
-import net.aegis.athena.utils.location.OptionalLocation;
-import net.aegis.athena.utils.location.OptionalPlayerLike;
+import net.aegis.athena.models.nickname.Nickname;
+import net.aegis.athena.models.nickname.NicknameService;
+import net.aegis.athena.utils.AdventureUtils;
+import net.aegis.athena.utils.Distance;
+import net.aegis.athena.utils.JsonBuilder;
+import net.aegis.athena.utils.Name;
+import net.aegis.athena.utils.StringUtils;
+import net.aegis.athena.utils.Tasks;
+import net.aegis.athena.utils.worldgroup.WorldGroup;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +36,7 @@ import static net.aegis.athena.utils.UUIDUtils.isUUID0;
 /**
  * A mongo database object owned by a player
  */
-public interface PlayerOwnedObject extends OptionalPlayerLike, DatabaseObject, Nicknamed {
+public interface PlayerOwnedObject extends Identified, ForwardingAudience.Single, DatabaseObject, Nicknamed {
 
 	@NotNull UUID getUuid();
 
@@ -114,16 +121,12 @@ public interface PlayerOwnedObject extends OptionalPlayerLike, DatabaseObject, N
 		return Nerd.of(getOnlinePlayer());
 	}
 
-//	default @NotNull WorldGroup getWorldGroup() {
-//		return getOnlineNerd().getWorldGroup();
-//	}
-
-	default Distance distanceTo(HasLocation location) {
-		return distance((HasLocation) getOnlinePlayer(), location);
+	default @NotNull WorldGroup getWorldGroup() {
+		return getOnlineNerd().getWorldGroup();
 	}
 
-	default Distance distanceTo(OptionalLocation location) {
-		return distance((HasLocation) getOnlinePlayer(), location);
+	default Distance distanceTo(Location location) {
+		return distance(getOnlinePlayer().getLocation(), location);
 	}
 
 	default @NotNull String getName() {
@@ -183,7 +186,7 @@ public interface PlayerOwnedObject extends OptionalPlayerLike, DatabaseObject, N
 			Athena.log(AdventureUtils.asPlainText(component));
 		else
 			// TODO - 1.19.2 Chat Validation Kick
-			// sendMessage(identityOf(sender), component, type);
+//			 sendMessage(identityOf(sender), component, type);
 			sendMessage(component, type);
 	}
 
@@ -217,9 +220,13 @@ public interface PlayerOwnedObject extends OptionalPlayerLike, DatabaseObject, N
 		return new JsonBuilder(message);
 	}
 
-	@Override
 	default @NotNull Identity identity() {
 		return Identity.identity(getUuid());
+	}
+
+	@Override
+	default @NotNull Audience audience() {
+		return Objects.requireNonNullElse(getPlayer(), Audience.empty());
 	}
 
 }

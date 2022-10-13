@@ -5,7 +5,12 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.converters.LocalDateConverter;
 import dev.morphia.converters.UUIDConverter;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -23,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class})
-public class Hours implements net.aegis.athena.framework.persistence.mongodb.interfaces.PlayerOwnedObject {
+public class Hours implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	protected UUID uuid;

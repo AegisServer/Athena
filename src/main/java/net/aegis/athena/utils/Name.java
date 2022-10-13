@@ -1,8 +1,6 @@
 package net.aegis.athena.utils;
 
-import net.aegis.athena.utils.location.HasOfflinePlayer;
-import net.aegis.athena.utils.location.HasPlayer;
-import net.aegis.athena.utils.location.OptionalPlayerLike;
+import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -25,10 +23,6 @@ public class Name {
 		return NAME_CACHE.get(uuid);
 	}
 
-	public static @Nullable String of(@NotNull HasUniqueId player) {
-		return of(player.getUniqueId());
-	}
-
 	public static @Nullable String of(@NotNull OfflinePlayer player) {
 		if (player instanceof Player online)
 			return of(online);
@@ -42,27 +36,16 @@ public class Name {
 		return NAME_CACHE.get(player.getUniqueId());
 	}
 
-	public static @Nullable String of(@NotNull HasOfflinePlayer hasPlayer) {
-		if (hasPlayer instanceof Player online)
-			return of(online);
-
-		return of(hasPlayer.getOfflinePlayer());
-	}
-
 	public static @NotNull String of(@NotNull Player player) {
 		return put(player.getUniqueId(), player.getName());
 	}
 
-	public static @NotNull String of(@NotNull HasPlayer hasPlayer) {
-		return of(hasPlayer.getPlayer());
-	}
-
-	public static @Nullable String of(@NotNull OptionalPlayerLike playerLike) {
-		Player player = playerLike.getPlayer();
+	public static @Nullable String of(@NotNull PlayerOwnedObject object) {
+		Player player = object.getPlayer();
 		if (player != null)
 			return of(player);
 		else
-			return of(playerLike.getUniqueId());
+			return of(object.getUniqueId());
 	}
 
 	public static @NotNull String put(@NotNull UUID uuid, @NotNull String name) {

@@ -17,7 +17,7 @@ public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends Mo
 	public List<T> getOnline() {
 		List<T> online = new ArrayList<>();
 		for (Player player : OnlinePlayers.getAll())
-			online.add(get((HasUniqueId) player));
+			online.add(get(player));
 		return online;
 	}
 

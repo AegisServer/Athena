@@ -1,6 +1,10 @@
 package net.aegis.athena.utils;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import net.aegis.athena.Athena;
 import net.aegis.athena.models.nerd.Rank;
 import net.luckperms.api.LuckPerms;
@@ -22,11 +26,16 @@ import net.luckperms.api.util.Tristate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
@@ -50,16 +59,17 @@ public class LuckPermsUtils {
 
 	@NotNull
 	@SneakyThrows
-	public static User getUser(@NotNull UUID player) {
-		User user = lp().getUserManager().getUser(player);
-		if (user == null)
-			user = lp().getUserManager().loadUser(player).get();
-		return user;
+	public static User getUser(@NotNull Player player) {
+		return getUser(player.getUniqueId());
 	}
 
 	@NotNull
-	public static User getUser(@NotNull HasUniqueId player) {
-		return getUser(player.getUniqueId());
+	@SneakyThrows
+	public static User getUser(@NotNull UUID uuid) {
+		User user = lp().getUserManager().getUser(uuid);
+		if (user == null)
+			user = lp().getUserManager().loadUser(uuid).get();
+		return user;
 	}
 
 	@NotNull
@@ -81,45 +91,37 @@ public class LuckPermsUtils {
 	}
 
 	@NotNull
-	public static Collection<Group> getGroups(@NotNull UUID player) {
-		return getGroups(getUser(player));
+	public static Collection<Group> getGroups(@NotNull Player player) {
+		return getGroups(getUser(player.getUniqueId()));
 	}
 
 	@NotNull
-	public static Collection<Group> getGroups(@NotNull HasUniqueId player) {
-		return getGroups(player.getUniqueId());
+	public static Collection<Group> getGroups(@NotNull UUID uuid) {
+		return getGroups(getUser(uuid));
 	}
 
-	public static boolean hasGroup(@NotNull UUID player, @NotNull Group group) {
-		return getGroups(player).contains(group);
+	public static boolean hasGroup(@NotNull Player player, @NotNull Group group) {
+		return getGroups(player.getUniqueId()).contains(group);
 	}
 
-	public static boolean hasGroup(@NotNull HasUniqueId player, @NotNull Group group) {
-		return hasGroup(player.getUniqueId(), group);
+	public static boolean hasGroup(@NotNull UUID uuid, @NotNull Group group) {
+		return getGroups(uuid).contains(group);
 	}
 
-	public static boolean hasGroup(@NotNull UUID player, @NotNull String group) {
-		return hasGroup(player, getGroup(group));
+	public static boolean hasGroup(@NotNull UUID uuid, @NotNull String group) {
+		return hasGroup(uuid, getGroup(group));
 	}
 
-	public static boolean hasGroup(@NotNull HasUniqueId player, @NotNull String group) {
-		return hasGroup(player.getUniqueId(), group);
+	public static boolean hasPermission(@NotNull Player player, @NotNull String permission) {
+		return getPermission(player.getUniqueId(), permission).asBoolean();
 	}
 
-	public static boolean hasPermission(@NotNull HasUniqueId player, @NotNull String permission) {
-		return getPermission(player, permission).asBoolean();
+	public static boolean hasPermission(@NotNull UUID uuid, @NotNull String permission) {
+		return getPermission(uuid, permission).asBoolean();
 	}
 
-	public static boolean hasPermission(@NotNull HasUniqueId player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
-		return getPermission(player, permission, contextOverrides).asBoolean();
-	}
-
-	public static boolean hasPermission(@NotNull UUID player, @NotNull String permission) {
-		return getPermission(player, permission).asBoolean();
-	}
-
-	public static boolean hasPermission(@NotNull UUID player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
-		return getPermission(player, permission, contextOverrides).asBoolean();
+	public static boolean hasPermission(@NotNull UUID uuid, @NotNull String permission, @NotNull ContextSet contextOverrides) {
+		return getPermission(uuid, permission, contextOverrides).asBoolean();
 	}
 
 	public static boolean hasPermission(@NotNull PermissionHolder player, @NotNull String permission) {
@@ -149,28 +151,23 @@ public class LuckPermsUtils {
 	}
 
 	@NotNull
-	public static Tristate getPermission(@NotNull UUID player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
+	public static Tristate getPermission(@NotNull Player player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
 		return getPermission(getUser(player), permission, contextOverrides);
 	}
 
 	@NotNull
-	public static Tristate getPermission(@NotNull UUID player, @NotNull String permission) {
+	public static Tristate getPermission(@NotNull UUID uuid, @NotNull String permission, @NotNull ContextSet contextOverrides) {
+		return getPermission(getUser(uuid), permission, contextOverrides);
+	}
+
+	@NotNull
+	public static Tristate getPermission(@NotNull Player player, @NotNull String permission) {
 		return getPermission(player, permission, ImmutableContextSet.empty());
 	}
 
 	@NotNull
-	public static Tristate getPermission(@NotNull HasUniqueId player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
-		return getPermission(player.getUniqueId(), permission, contextOverrides);
-	}
-
-	@NotNull
-	public static Tristate getPermission(@NotNull HasUniqueId player, @NotNull String permission) {
-		return getPermission(player, permission, ImmutableContextSet.empty());
-	}
-
-	@NotNull
-	public static Collection<Node> getPermissions(@NotNull HasUniqueId player) {
-		return getPermissions(player.getUniqueId());
+	public static Tristate getPermission(@NotNull UUID uuid, @NotNull String permission) {
+		return getPermission(uuid, permission, ImmutableContextSet.empty());
 	}
 
 	@NotNull
@@ -229,7 +226,7 @@ public class LuckPermsUtils {
 			private boolean value = true;
 			private World world;
 
-			public PermissionChangeBuilder player(HasUniqueId player) {
+			public PermissionChangeBuilder player(Player player) {
 				this.uuid = player.getUniqueId();
 				return this;
 			}
@@ -323,7 +320,7 @@ public class LuckPermsUtils {
 			private UUID uuid;
 			private List<String> groups;
 
-			public GroupChangeBuilder player(HasUniqueId player) {
+			public GroupChangeBuilder player(Player player) {
 				this.uuid = player.getUniqueId();
 				return this;
 			}

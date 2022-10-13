@@ -3,7 +3,6 @@ package net.aegis.athena.utils.worldgroup;
 import lombok.Getter;
 import net.aegis.athena.utils.LuckPermsUtils;
 import net.aegis.athena.utils.StringUtils;
-import net.aegis.athena.utils.location.OptionalLocation;
 import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO CYN - these are not YOUR world names!
 public enum SubWorldGroup implements IWorldGroup {
 	LEGACY1("legacy1", "legacy1_nether", "legacy1_the_end"),
 	LEGACY2("legacy2", "legacy2_nether", "legacy2_the_end"),
@@ -58,13 +58,6 @@ public enum SubWorldGroup implements IWorldGroup {
 
 	public static SubWorldGroup of(@Nullable Entity entity) {
 		return entity == null ? UNKNOWN : of(entity.getWorld());
-	}
-
-	public static SubWorldGroup of(@Nullable OptionalLocation location) {
-		if (location == null)
-			return UNKNOWN;
-		Location loc = location.getLocation();
-		return loc == null ? UNKNOWN : of(loc.getWorld());
 	}
 
 	public static SubWorldGroup of(@Nullable Location location) {

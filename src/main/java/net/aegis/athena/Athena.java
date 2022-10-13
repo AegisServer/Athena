@@ -7,7 +7,9 @@ import com.onarandombox.multiverseinventories.MultiverseInventories;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import me.lucko.spark.api.Spark;
+import net.aegis.athena.features.chat.Chat;
 import net.aegis.athena.features.commands.DiscordCommand;
 import net.aegis.athena.features.commands.ShowItemCommand;
 import net.aegis.athena.features.listeners.JoinLeaveListener;
@@ -17,8 +19,16 @@ import net.aegis.athena.features.listeners.common.TemporaryListener;
 import net.aegis.athena.framework.commands.Commands;
 import net.aegis.athena.framework.features.Features;
 import net.aegis.athena.framework.persistence.mongodb.MongoService;
-import net.aegis.athena.utils.*;
+import net.aegis.athena.utils.EnumUtils;
+import net.aegis.athena.utils.Env;
+import net.aegis.athena.utils.LuckPermsUtils;
+import net.aegis.athena.utils.Name;
+import net.aegis.athena.utils.PlayerUtils;
 import net.aegis.athena.utils.PlayerUtils.OnlinePlayers;
+import net.aegis.athena.utils.ReflectionUtils;
+import net.aegis.athena.utils.Tasks;
+import net.aegis.athena.utils.Timer;
+import net.aegis.athena.utils.Utils;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
@@ -149,15 +159,15 @@ public final class Athena extends JavaPlugin {
 	}
 
 	public @NonNull BukkitAudiences adventure() {
-		if(this.adventure == null) {
+		if (this.adventure == null) {
 			throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
 		}
 		return this.adventure;
 	}
 
-	final static String aegisBlue ="&#6E759F";
-	final static String aegisRed = "&#9F6E75";
-	final static String aegisBeige = "&#C1BCAB";
+	public final static String aegisBlue = "&#6E759F";
+	public final static String aegisRed = "&#9F6E75";
+	public final static String aegisBeige = "&#C1BCAB";
 
 	@Override
 	public void onEnable() {
@@ -189,8 +199,10 @@ public final class Athena extends JavaPlugin {
 			new Timer(" Cache Usernames", () -> OnlinePlayers.getAll().forEach(Name::of));
 			new Timer(" Config", this::setupConfig);
 			new Timer(" Hooks", this::hooks);
+			new Timer(" Databases", this::databases);
 			new Timer(" Features", () -> {
 				features = new Features(this, "net.aegis.athena.features");
+				features.register(Chat.class); // prioritize
 				features.registerAll();
 			});
 			new Timer(" Commands", () -> {
@@ -208,6 +220,7 @@ public final class Athena extends JavaPlugin {
 	}
 
 	@Override
+	@SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
 	public void onDisable() {
 		// Plugin shutdown logic
 
@@ -219,11 +232,16 @@ public final class Athena extends JavaPlugin {
 		//end of kyori adventure
 
 		List<Runnable> tasks = List.of(
-				() -> { PlayerUtils.runCommandAsConsole("save-all"); },
-				() -> { if (cron.isStarted()) cron.stop(); },
-				() -> { if (commands != null) commands.unregisterAll(); },
-				() -> { Bukkit.getServicesManager().unregisterAll(this); },
-				() -> { LuckPermsUtils.shutdown(); }
+				() -> {PlayerUtils.runCommandAsConsole("save-all");},
+				() -> {if (cron.isStarted()) cron.stop();},
+				() -> {if (commands != null) commands.unregisterAll();},
+				() -> {if (features != null) features.unregisterExcept(Chat.class);},
+				() -> {if (features != null) features.unregister(Chat.class);},
+				() -> {Bukkit.getServicesManager().unregisterAll(this);},
+				() -> {LuckPermsUtils.shutdown();},
+
+				() -> {shutdownDatabases();}, // last
+				() -> {if (api != null) api.shutdown();} // last
 		);
 
 	}
@@ -301,7 +319,26 @@ public final class Athena extends JavaPlugin {
 		getInstance().getLogger().log(level, ChatColor.stripColor(message), ex);
 	}
 
+	private void databases() {
+		new Timer(" MongoDB", () -> {
+			// new HomeService();
+			Tasks.wait(5, () -> MongoService.loadServices("net.aegis.athena.models"));
+		});
+	}
+
+	@SneakyThrows
+	private void shutdownDatabases() {
+		for (Class<? extends MongoService> service : MongoService.getServices())
+			if (Utils.canEnable(service)) {
+				final MongoService<?> serviceInstance = service.getConstructor().newInstance();
+				// TODO Maybe per-service setting to save on shutdown? This will save way too many things
+//				serviceInstance.saveCacheSync();
+				serviceInstance.clearCache();
+			}
+	}
+
 	private void hooks() {
+//		signMenuFactory = new SignMenuFactory(this);
 		multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
 		multiverseInventories = (MultiverseInventories) Bukkit.getPluginManager().getPlugin("Multiverse-Inventories");
 		cron.start();

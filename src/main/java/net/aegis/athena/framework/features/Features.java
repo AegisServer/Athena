@@ -3,11 +3,17 @@ package net.aegis.athena.framework.features;
 import lombok.Getter;
 import net.aegis.athena.Athena;
 import net.aegis.athena.framework.exceptions.AthenaException;
+import net.aegis.athena.utils.Timer;
 import net.aegis.athena.utils.Utils;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static net.aegis.athena.utils.ReflectionUtils.subTypesOf;
 
@@ -78,49 +84,49 @@ public class Features {
 		if (isRegistered(clazz))
 			return;
 
-//		new Timer("  Register feature " + feature.getName(), () -> {
-//			try {
-//				feature.onStart();
-//				Utils.tryRegisterListener(feature);
-//				registered.put(clazz, feature);
-//			} catch (Exception ex) {
-//				plugin.getLogger().info("Error while registering feature " + feature.getName());
-//				ex.printStackTrace();
-//			}
-//		});
-//	}
-//
-//	public void unregisterAll() {
-//		for (Class<? extends Feature> clazz : featureSet)
-//			if (!Modifier.isAbstract(clazz.getModifiers()))
-//				unregister(clazz);
-//	}
+		new Timer("  Register feature " + feature.getName(), () -> {
+			try {
+				feature.onStart();
+				Utils.tryRegisterListener(feature);
+				registered.put(clazz, feature);
+			} catch (Exception ex) {
+				plugin.getLogger().info("Error while registering feature " + feature.getName());
+				ex.printStackTrace();
+			}
+		});
+	}
 
-//	public void unregister(Class<? extends Feature>... features) {
-//		for (Class<? extends Feature> clazz : features)
-//			if (isRegistered(clazz))
-//				unregister(Features.registered.get(clazz));
-//			else if (Utils.canEnable(clazz))
-//				plugin.getLogger().severe("Cannot unregister feature " + prettyName(clazz) + " because it was never registered");
-//	}
+	public void unregisterAll() {
+		for (Class<? extends Feature> clazz : featureSet)
+			if (!Modifier.isAbstract(clazz.getModifiers()))
+				unregister(clazz);
+	}
 
-//	public void unregisterExcept(Class<? extends Feature>... features) {
-//		List<Class<? extends Feature>> excluded = Arrays.asList(features);
-//		for (Class<? extends Feature> clazz : featureSet)
-//			if (!excluded.contains(clazz))
-//				unregister(clazz);
-//	}
+	public void unregister(Class<? extends Feature>... features) {
+		for (Class<? extends Feature> clazz : features)
+			if (isRegistered(clazz))
+				unregister(Features.registered.get(clazz));
+			else if (Utils.canEnable(clazz))
+				plugin.getLogger().severe("Cannot unregister feature " + prettyName(clazz) + " because it was never registered");
+	}
 
-//	public void unregister(Feature feature) {
-//		new Timer("  Unregister feature " + feature.getName(), () -> {
-//			try {
-//				feature.onStop();
-//			} catch (Exception ex) {
-//				plugin.getLogger().info("Error while unregistering feature " + feature.getName());
-//				ex.printStackTrace();
-//			}
-//			registered.remove(feature.getClass());
-//		});
+	public void unregisterExcept(Class<? extends Feature>... features) {
+		List<Class<? extends Feature>> excluded = Arrays.asList(features);
+		for (Class<? extends Feature> clazz : featureSet)
+			if (!excluded.contains(clazz))
+				unregister(clazz);
+	}
+
+	public void unregister(Feature feature) {
+		new Timer("  Unregister feature " + feature.getName(), () -> {
+			try {
+				feature.onStop();
+			} catch (Exception ex) {
+				plugin.getLogger().info("Error while unregistering feature " + feature.getName());
+				ex.printStackTrace();
+			}
+			registered.remove(feature.getClass());
+		});
 	}
 
 }

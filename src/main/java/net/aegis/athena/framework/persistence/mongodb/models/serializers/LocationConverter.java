@@ -1,4 +1,4 @@
-package net.aegis.athena.framework.persistence.serializer.mongodb;
+package net.aegis.athena.framework.persistence.mongodb.models.serializers;
 
 import com.mongodb.BasicDBObject;
 import dev.morphia.converters.SimpleValueConverter;

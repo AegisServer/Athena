@@ -6,9 +6,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import net.aegis.athena.utils.EnumUtils.IterableEnum;
-import net.aegis.athena.utils.location.HasPlayer;
 import org.apache.commons.lang.Validate;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -148,8 +151,7 @@ public class LocationUtils {
 	/**
 	 * Sets a player's pitch and yaw to look at the provided location.
 	 */
-	public static void lookAt(HasPlayer hasPlayer, Location lookAt) {
-		Player player = hasPlayer.getPlayer();
+	public static void lookAt(Player player, Location lookAt) {
 		Vector direction = player.getEyeLocation().toVector().subtract(lookAt.add(0.5, 0.5, 0.5).toVector()).normalize();
 		double x = direction.getX();
 		double y = direction.getY();
@@ -188,11 +190,12 @@ public class LocationUtils {
 
 	/**
 	 * Gets a player's facing direction in a format along the lines of "+X"
+	 *
 	 * @param player player to get
 	 * @return facing direction as text
 	 */
-	public static String getShortFacingDirection(HasPlayer player) {
-		return getShortFacingDirection(player.getPlayer().getFacing());
+	public static String getShortFacingDirection(Player player) {
+		return getShortFacingDirection(player.getFacing());
 	}
 
 	@NotNull
@@ -299,8 +302,8 @@ public class LocationUtils {
 			return CardinalDirection.valueOf(blockFace.name());
 		}
 
-		public static CardinalDirection of(HasPlayer player) {
-			return of(player.getPlayer().getLocation());
+		public static CardinalDirection of(Player player) {
+			return of(player.getLocation());
 		}
 
 		public static CardinalDirection of(Location location) {

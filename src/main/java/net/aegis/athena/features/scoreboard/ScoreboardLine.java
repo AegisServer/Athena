@@ -15,12 +15,15 @@ import net.aegis.athena.utils.LocationUtils;
 import net.aegis.athena.utils.PlayerUtils.OnlinePlayers;
 import net.aegis.athena.utils.StringUtils;
 import net.aegis.athena.utils.TimeUtils.Timespan.TimespanBuilder;
-import net.aegis.athena.utils.location.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -171,7 +174,7 @@ public enum ScoreboardLine {
 	FACING {
 		@Override
 		public String render(Player player) {
-			return "&3Facing: &e" + camelCase(player.getFacing()) + " (" + LocationUtils.getShortFacingDirection((HasPlayer) player) + ")";
+			return "&3Facing: &e" + camelCase(player.getFacing()) + " (" + LocationUtils.getShortFacingDirection(player) + ")";
 		}
 	},
 

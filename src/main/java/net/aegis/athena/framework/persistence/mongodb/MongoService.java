@@ -16,7 +16,6 @@ import net.aegis.athena.framework.exceptions.AthenaException;
 import net.aegis.athena.framework.interfaces.DatabaseObject;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import net.aegis.athena.framework.persistence.mongodb.annotations.ObjectClass;
-import net.aegis.athena.utils.Log;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
@@ -27,7 +26,15 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -46,6 +53,10 @@ public abstract class MongoService<T extends DatabaseObject> {
 	private static final Map<Class<? extends DatabaseObject>, Class<? extends MongoService>> objectToServiceMap = new HashMap<>();
 	@Getter
 	private static final Map<Class<? extends MongoService>, Class<? extends DatabaseObject>> serviceToObjectMap = new HashMap<>();
+
+	static {
+		database = MongoConnector.connect();
+	}
 
 	public static void loadServices() {
 		loadServices(Collections.emptySet());

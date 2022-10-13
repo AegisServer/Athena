@@ -1,7 +1,6 @@
 package net.aegis.athena.utils;
 
-import net.aegis.athena.utils.location.HasLocation;
-import net.aegis.athena.utils.location.OptionalLocation;
+import lombok.NonNull;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,20 +17,8 @@ public class Distance implements Comparable<Distance> {
 		this.distanceSquared = from.distanceSquared(to);
 	}
 
-	public static Distance distance(HasLocation from, HasLocation to) {
-		return new Distance(from.getLocation(), to.getLocation());
-	}
-
-	public static Distance distance(OptionalLocation from, HasLocation to) {
-		return new Distance(requireNonNull(from.getLocation()), to.getLocation());
-	}
-
-	public static Distance distance(HasLocation from, OptionalLocation to) {
-		return new Distance(from.getLocation(), requireNonNull(to.getLocation()));
-	}
-
-	public static Distance distance(OptionalLocation from, OptionalLocation to) {
-		return new Distance(requireNonNull(from.getLocation()), to.getLocation());
+	public static Distance distance(@NonNull Location from, @NonNull Location to) {
+		return new Distance(requireNonNull(from), requireNonNull(to));
 	}
 
 	public double get() {

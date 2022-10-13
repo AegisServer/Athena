@@ -1,15 +1,17 @@
 package net.aegis.athena.models.warps;
 
-
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
+import net.aegis.athena.framework.persistence.mongodb.models.serializers.LocationConverter;
 import net.aegis.athena.framework.persistence.mongodb.models.serializers.UUIDConverter;
-import net.aegis.athena.framework.persistence.serializer.mongodb.LocationConverter;
-import net.aegis.athena.utils.location.OptionalLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -23,7 +25,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static net.aegis.athena.utils.StringUtils.camelCase;
-
 
 @Data
 @Entity(value = "warps", noClassnameStored = true)
@@ -61,7 +62,7 @@ public class Warps implements PlayerOwnedObject {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Converters(LocationConverter.class)
-	public static class Warp implements OptionalLocation {
+	public static class Warp {
 		private String name;
 		private WarpType type;
 		private Location location;

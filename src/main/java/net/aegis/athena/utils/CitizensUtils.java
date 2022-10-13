@@ -3,12 +3,14 @@ package net.aegis.athena.utils;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Builder;
 import net.aegis.athena.hooks.Hook;
+import net.aegis.athena.models.nerd.Nerd;
+import net.aegis.athena.models.nerd.Rank;
+import net.aegis.athena.models.nickname.Nickname;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.SkinTrait;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -17,8 +19,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import static net.aegis.athena.utils.Distance.distance;
 import static net.aegis.athena.utils.PlayerUtils.runCommandAsConsole;
 
 
@@ -47,12 +53,13 @@ public class CitizensUtils {
 
 	/**
 	 * Sets an NPC to a player's (nick)name and skin
-	 * @param npc NPC to update
-	 * @param player a server member
+	 *
+	 * @param npc  NPC to update
+	 * @param uuid a server member
 	 */
-	public static void updateNameAndSkin(NPC npc, HasUniqueId player) {
-		updateName(npc, Bukkit.getPlayer(player.toString()).getDisplayName());
-		updateSkin(npc, Bukkit.getPlayer(player.toString()).getName());
+	public static void updateNameAndSkin(NPC npc, UUID uuid) {
+		updateName(npc, Nickname.of(uuid));
+		updateSkin(npc, Name.of(uuid));
 	}
 
 	/*
@@ -60,10 +67,10 @@ public class CitizensUtils {
 	 * @param npc NPC to update
 	 * @param nerd a server member
 	 */
-//	public static void updateNameAndSkin(NPC npc, Nerd nerd) {
-//		updateName(npc, nerd.getColoredName());
-//		updateSkin(npc, nerd.getName());
-//	}
+	public static void updateNameAndSkin(NPC npc, Nerd nerd) {
+		updateName(npc, nerd.getColoredName());
+		updateSkin(npc, nerd.getName());
+	}
 
 	public static void updateName(int id, String name) {
 		updateName(getNPC(id), name);
@@ -106,14 +113,14 @@ public class CitizensUtils {
 	}
 	*/
 
-	public static NPC spawnNPC(HasUniqueId owner, Location location) {
-		String nickname = Bukkit.getPlayer(owner.toString()).getDisplayName();
-		String name = Bukkit.getPlayer(owner.toString()).getName();
+	public static NPC spawnNPC(UUID owner, Location location) {
+		String nickname = Nickname.of(owner);
+		String name = Name.of(owner);
 
 		NPC npc = Hook.CITIZENS.createNPC(EntityType.PLAYER, nickname);
 		npc.spawn(location, SpawnReason.PLUGIN);
 		Owner npcOwner = new Owner();
-		npcOwner.setOwner(nickname, owner.getUniqueId());
+		npcOwner.setOwner(nickname, owner);
 		npc.addTrait(npcOwner);
 		updateSkin(npc, name, true);
 		return npc;
@@ -174,66 +181,60 @@ public class CitizensUtils {
 		private final @Nullable ProtectedRegion region;
 		private final @Nullable World world;
 		private final @Nullable UUID owner;
-//		private final @Nullable Rank rankGte;
-//		private final @Nullable Rank rankLte;
+		private final @Nullable Rank rankGte;
+		private final @Nullable Rank rankLte;
 
 		private final @Nullable Integer radius;
 		private final @Nullable Location from;
 
-//		private boolean filter(NPC npc) {
-//			final UUID ownerId = npc.getTrait(Owner.class).getOwnerId();
-//			if (ownerId != null) {
-//				if (owner != null && !owner.equals(ownerId))
-//					return false;
-//
-//				if (rankGte != null && !Rank.of(ownerId).gte(rankGte))
-//					return false;
-//
-//				if (rankLte != null && !Rank.of(ownerId).lte(rankLte))
-//					return false;
-//			}
-//
-//			if (spawned != null && (npc.getStoredLocation() == null || !npc.getTrait(Spawned.class).shouldSpawn()) && spawned)
-//				return false;
-//
-//			if (npc.getStoredLocation() == null)
-//				return false;
-//
-//			if (world != null && !world.equals(npc.getStoredLocation().getWorld()))
-//				return false;
-//
-//			if (region != null && !region.contains(WorldGuardUtils.toBlockVector3(npc.getStoredLocation())))
-//				return false;
-//
-//			if (radius != null && from != null) {
-//				if (!from.getWorld().equals(npc.getStoredLocation().getWorld()))
-//					return false;
-//				if (distance(from, npc.getStoredLocation()).gt(radius))
-//					return false;
-//			}
-//
-//			return true;
-//		}
+		private boolean filter(NPC npc) {
+			final UUID ownerId = npc.getTrait(Owner.class).getOwnerId();
+			if (ownerId != null) {
+				if (owner != null && !owner.equals(ownerId))
+					return false;
 
-//		public List<NPC> get() {
-//			return StreamSupport.stream(Hook.CITIZENS.getRegistry().spliterator(), false)
-//					.filter(this::filter).collect(Collectors.toList());
-//		}
+				if (rankGte != null && !Rank.of(ownerId).gte(rankGte))
+					return false;
 
-//		public boolean anyMatch() {
-//			return !get().isEmpty();
-//		}
+				if (rankLte != null && !Rank.of(ownerId).lte(rankLte))
+					return false;
+			}
+
+			if (spawned != null && (npc.getStoredLocation() == null || !npc.getTrait(Spawned.class).shouldSpawn()) && spawned)
+				return false;
+
+			if (npc.getStoredLocation() == null)
+				return false;
+
+			if (world != null && !world.equals(npc.getStoredLocation().getWorld()))
+				return false;
+
+			if (region != null && !region.contains(WorldGuardUtils.toBlockVector3(npc.getStoredLocation())))
+				return false;
+
+			if (radius != null && from != null) {
+				if (!from.getWorld().equals(npc.getStoredLocation().getWorld()))
+					return false;
+				if (distance(from, npc.getStoredLocation()).gt(radius))
+					return false;
+			}
+
+			return true;
+		}
+
+		public List<NPC> get() {
+			return StreamSupport.stream(Hook.CITIZENS.getRegistry().spliterator(), false)
+					.filter(this::filter).collect(Collectors.toList());
+		}
+
+		public boolean anyMatch() {
+			return !get().isEmpty();
+		}
 
 		public static class NPCFinderBuilder {
 			public @Contract("_ -> this") NPCFinderBuilder owner(@Nullable UUID owner) {
 				this.owner = owner;
 				return this;
-			}
-
-			public @Contract("_ -> this") NPCFinderBuilder owner(@Nullable HasUniqueId owner) {
-				if (owner == null)
-					return this;
-				return owner(owner.getUniqueId());
 			}
 
 			/**

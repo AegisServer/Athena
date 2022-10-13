@@ -1,10 +1,13 @@
 package net.aegis.athena.utils;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
 import net.aegis.athena.Athena;
-import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
 import net.aegis.athena.utils.TimeUtils.TickTime;
-import net.aegis.athena.utils.location.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -242,28 +245,27 @@ public class Tasks {
 		}
 
 		@Builder(buildMethodName = "start")
-		public ExpBarCountdown(HasPlayer player, int duration, boolean restoreExp) {
-			Player _player = player.getPlayer();
-			final int level = _player.getLevel();
-			final float exp = _player.getExp();
+		public ExpBarCountdown(Player player, int duration, boolean restoreExp) {
+			final int level = player.getLevel();
+			final float exp = player.getExp();
 
 			countdown.set(Tasks.Countdown.builder()
 					.duration(duration)
 					.onTick(ticks -> {
-						if (!_player.isOnline())
+						if (!player.isOnline())
 							countdown.get().stop();
 
 						long seconds = (ticks / 20) + 1;
-						_player.setLevel((int) (seconds > 59 ? seconds / 60 : seconds));
-						_player.setExp((float) ticks / duration);
+						player.setLevel((int) (seconds > 59 ? seconds / 60 : seconds));
+						player.setExp((float) ticks / duration);
 					})
 					.onComplete(() -> {
-						if (!_player.isOnline())
+						if (!player.isOnline())
 							countdown.get().stop();
 
 						if (restoreExp) {
-							_player.setLevel(level);
-							_player.setExp(exp);
+							player.setLevel(level);
+							player.setExp(exp);
 						}
 					})
 					.start());
