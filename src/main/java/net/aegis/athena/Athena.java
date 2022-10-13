@@ -10,11 +10,9 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.lucko.spark.api.Spark;
 import net.aegis.athena.features.chat.Chat;
-import net.aegis.athena.features.commands.DiscordCommand;
-import net.aegis.athena.features.commands.ShowItemCommand;
-import net.aegis.athena.features.listeners.JoinLeaveListener;
-import net.aegis.athena.features.listeners.OlympusBreakListener;
-import net.aegis.athena.features.listeners.RandomSpawnListener;
+import net.aegis.athena.features.listeners.JoinLeave;
+import net.aegis.athena.features.listeners.OlympusBreak;
+import net.aegis.athena.features.listeners.RandomSpawn;
 import net.aegis.athena.features.listeners.common.TemporaryListener;
 import net.aegis.athena.framework.commands.Commands;
 import net.aegis.athena.framework.features.Features;
@@ -186,14 +184,11 @@ public final class Athena extends JavaPlugin {
 		//end of mongodb stuff
 
 		//register listener classes
-		getServer().getPluginManager().registerEvents(new JoinLeaveListener(), this);
-		getServer().getPluginManager().registerEvents(new RandomSpawnListener(), this);
-		getServer().getPluginManager().registerEvents(new OlympusBreakListener(), this);
+		getServer().getPluginManager().registerEvents(new JoinLeave(), this);
+		getServer().getPluginManager().registerEvents(new RandomSpawn(), this);
+		getServer().getPluginManager().registerEvents(new OlympusBreak(), this);
 		//end of listener registry
 
-		//register command classes
-		getCommand("discord").setExecutor(new DiscordCommand(this));
-		getCommand("showitem").setExecutor(new ShowItemCommand());
 
 		new Timer("Enable", () -> {
 			new Timer(" Cache Usernames", () -> OnlinePlayers.getAll().forEach(Name::of));

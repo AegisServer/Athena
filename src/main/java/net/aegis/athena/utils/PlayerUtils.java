@@ -504,4 +504,8 @@ public class PlayerUtils {
 				.collect(toList());
 	}
 
+	public static boolean isWorldGuardEditing(Player player) {
+		return player.hasPermission("worldguard.region.bypass.*");
+	}
+
 }

@@ -33,6 +33,8 @@ import java.util.function.Function;
 
 import static net.aegis.athena.utils.StringUtils.camelCase;
 
+// TODO CYN:
+//		- fix colors & header animation text
 public enum ScoreboardLine {
 	ONLINE {
 		@Override

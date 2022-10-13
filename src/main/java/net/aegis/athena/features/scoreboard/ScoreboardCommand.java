@@ -5,8 +5,13 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.aegis.athena.features.menus.BookBuilder.WrittenBookMenu;
 import net.aegis.athena.framework.commands.models.CustomCommand;
-import net.aegis.athena.framework.commands.models.annotations.*;
+import net.aegis.athena.framework.commands.models.annotations.Aliases;
+import net.aegis.athena.framework.commands.models.annotations.Description;
+import net.aegis.athena.framework.commands.models.annotations.HideFromHelp;
+import net.aegis.athena.framework.commands.models.annotations.Path;
+import net.aegis.athena.framework.commands.models.annotations.Permission;
 import net.aegis.athena.framework.commands.models.annotations.Permission.Group;
+import net.aegis.athena.framework.commands.models.annotations.TabCompleteIgnore;
 import net.aegis.athena.framework.commands.models.events.CommandEvent;
 import net.aegis.athena.models.nickname.Nickname;
 import net.aegis.athena.models.scoreboard.ScoreboardService;
@@ -42,7 +47,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	}
 
 	@Description("Turn the scoreboard on or off")
-	@Path("[on/off")
+	@Path("[on/off]")
 	void toggle(Boolean enable) {
 		user.setActive((enable != null ? enable : !user.isActive()));
 		if (!user.isActive())

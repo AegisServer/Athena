@@ -1,10 +1,10 @@
 package net.aegis.athena.features.listeners;
 
-import net.aegis.athena.Athena;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.*;
+import net.aegis.athena.utils.PlayerUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-public class OlympusBreakListener implements Listener {
+public class OlympusBreak implements Listener {
 
 
 	public static World getWorld() {
@@ -54,7 +54,7 @@ public class OlympusBreakListener implements Listener {
 	private static boolean isNotAtOlympus(EquipmentSlot slot, Player player) {
 		if (!EquipmentSlot.HAND.equals(slot)) return true;
 
-		return OlympusBreakListener.isNotAtOlympus(player);
+		return OlympusBreak.isNotAtOlympus(player);
 	}
 
 	public static ItemStack getItem(Block block) {
@@ -67,19 +67,23 @@ public class OlympusBreakListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
-		if (OlympusBreakListener.isNotAtOlympus(block)) return;
-		if (player.hasPermission("worldguard.region.bypass.*")) return;
+
+		if (OlympusBreak.isNotAtOlympus(block))
+			return;
+		if (PlayerUtils.isWorldGuardEditing(player))
+			return;
+
 		event.setCancelled(true);
 
 		if (event.getBlock().getType() != Material.WHEAT) {
-			TextComponent component = Component.text("You cannot break that here", TextColor.fromHexString(aegisRed));
-			Athena.getInstance().adventure().player(player).sendMessage(component);
-		} else {
-			Ageable ageable = (Ageable) block.getBlockData();
-			ageable.setAge(0);
-			block.setBlockData(ageable);
-			getWorld().dropItemNaturally(event.getBlock().getLocation(), getItem(event.getBlock()));
+			PlayerUtils.send(player, aegisRed + "You cannot break that here");
+			return;
 		}
+
+		Ageable ageable = (Ageable) block.getBlockData();
+		ageable.setAge(0);
+		block.setBlockData(ageable);
+		getWorld().dropItemNaturally(event.getBlock().getLocation(), getItem(event.getBlock()));
 	}
 
 }
