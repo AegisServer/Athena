@@ -1,5 +1,6 @@
 package net.aegis.athena.features.listeners;
 
+import lombok.NoArgsConstructor;
 import net.aegis.athena.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+@NoArgsConstructor
 public class OlympusBreak implements Listener {
 
 

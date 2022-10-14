@@ -44,9 +44,10 @@ public class MongoConnector {
 			if (!Nullables.isNullOrEmpty(config.getModelPath()))
 				typesAnnotatedWith(Entity.class, config.getModelPath());
 
+			//TODO CYN
 			MongoCredential root = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
 			MongoClient mongoClient = new MongoClient(new ServerAddress(), root, MongoClientOptions.builder().build());
-			String database = (config.getPrefix() == null ? "" : config.getPrefix() + "_") + "bearnation";
+			String database = (config.getPrefix() == null ? "" : config.getPrefix() + "_") + "aegis";
 			datastore = morphia.createDatastore(mongoClient, database);
 			datastore.ensureIndexes();
 

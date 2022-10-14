@@ -1,5 +1,6 @@
 package net.aegis.athena.features.listeners;
 
+import lombok.NoArgsConstructor;
 import net.aegis.athena.utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,6 +12,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
 public class RandomSpawn implements Listener {
 
 	private static final List<Location> spawnPoints = new ArrayList<>() {{

@@ -7,7 +7,6 @@ import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -20,24 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO CYN - these are not YOUR world names!
 public enum SubWorldGroup implements IWorldGroup {
-	LEGACY1("legacy1", "legacy1_nether", "legacy1_the_end"),
-	LEGACY2("legacy2", "legacy2_nether", "legacy2_the_end"),
 	SURVIVAL("survival", "survival_nether", "survival_the_end"),
-	RESOURCE("resource", "resource_nether", "resource_the_end"),
-	STAFF_SURVIVAL("staff_world", "staff_world_nether", "staff_world_the_end"),
-	DEATH_SWAP("deathswap", "deathswap_nether"),
-	UHC("uhc", "uhc_nether"),
-	BINGO("bingo", "bingo_nether"),
-	SKYBLOCK("bskyblock_world", "bskyblock_world_nether", "bskyblock_world_the_end"),
-	ONEBLOCK("oneblock_world", "oneblock_world_nether"),
-	BUILD_CONTESTS {
-		@Override
-		public @NotNull List<String> getWorldNames() {
-			return Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith("buildcontest")).toList();
-		}
-	},
+	WORLD("world", "world_nether", "world_the_end"),
 	UNKNOWN;
 
 	@Getter

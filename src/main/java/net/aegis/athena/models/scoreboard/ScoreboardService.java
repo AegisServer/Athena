@@ -1,7 +1,6 @@
 package net.aegis.athena.models.scoreboard;
 
 import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
-import net.aegis.athena.framework.persistence.mongodb.MongoPlayerServices;
 import net.aegis.athena.framework.persistence.mongodb.annotations.ObjectClass;
 
 import java.util.Map;

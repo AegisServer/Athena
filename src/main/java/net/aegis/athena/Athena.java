@@ -1,7 +1,5 @@
 package net.aegis.athena;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.multiverseinventories.MultiverseInventories;
 import it.sauronsoftware.cron4j.Scheduler;
@@ -10,9 +8,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.lucko.spark.api.Spark;
 import net.aegis.athena.features.chat.Chat;
-import net.aegis.athena.features.listeners.JoinLeave;
-import net.aegis.athena.features.listeners.OlympusBreak;
-import net.aegis.athena.features.listeners.RandomSpawn;
 import net.aegis.athena.features.listeners.common.TemporaryListener;
 import net.aegis.athena.framework.commands.Commands;
 import net.aegis.athena.framework.features.Features;
@@ -177,16 +172,16 @@ public final class Athena extends JavaPlugin {
 		//end of config initialization
 
 		//mongodb stuff
-		String url = getConfig().getString("Url");
-		MongoClient mongoClient = MongoClients.create(url);
+//		String url = getConfig().getString("Url");
+//		MongoClient mongoClient = MongoClients.create(url);
 //		MongoCollection<Document> collection = mongoClient.getDatabase("Aegis").getCollection("users");
-		log("Connected to Database");
+//		log("Connected to Database");
 		//end of mongodb stuff
 
 		//register listener classes
-		getServer().getPluginManager().registerEvents(new JoinLeave(), this);
-		getServer().getPluginManager().registerEvents(new RandomSpawn(), this);
-		getServer().getPluginManager().registerEvents(new OlympusBreak(), this);
+//		getServer().getPluginManager().registerEvents(new JoinLeave(), this);
+//		getServer().getPluginManager().registerEvents(new RandomSpawn(), this);
+//		getServer().getPluginManager().registerEvents(new OlympusBreak(), this);
 		//end of listener registry
 
 

@@ -50,6 +50,8 @@ public class API {
 	public DatabaseConfig getDatabaseConfig() {
 		return DatabaseConfig.builder()
 				.password(Athena.getInstance().getConfig().getString("databases.mongodb.password"))
+				.host(Athena.getInstance().getConfig().getString("databases.mongodb.host"))
+				.username(Athena.getInstance().getConfig().getString("databases.mongodb.username"))
 				.modelPath("net.aegis.athena.models")
 				.env(getEnv())
 				.build();
