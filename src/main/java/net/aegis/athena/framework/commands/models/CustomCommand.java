@@ -272,7 +272,6 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected void send(Object object) {
-		Bukkit.broadcastMessage("CustomCommand: send Object");
 		if (object instanceof String)
 			send(sender(), object);
 		else if (object instanceof JsonBuilder)
@@ -288,17 +287,14 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected void send(String message) {
-		Bukkit.broadcastMessage("CustomCommand: send String");
 		send(sender(), json(message));
 	}
 
 	protected void send(ComponentLike component) {
-		Bukkit.broadcastMessage("CustomCommand: send ComponentLike");
 		send(sender(), component);
 	}
 
 	protected void send(Object sender, Object message) {
-		Bukkit.broadcastMessage("CustomCommand: send Object Object");
 		PlayerUtils.send(sender, message);
 	}
 

@@ -1,7 +1,7 @@
 package net.aegis.athena.models.nickname;
 
 import dev.morphia.query.Query;
-import net.aegis.athena.framework.persistence.mongodb.MongoPlayerServices;
+import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
 import net.aegis.athena.framework.persistence.mongodb.annotations.ObjectClass;
 
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ObjectClass(Nickname.class)
-public class NicknameService extends MongoPlayerServices<Nickname> {
+public class NicknameService extends MongoPlayerService<Nickname> {
 	private final static Map<UUID, Nickname> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Nickname> getCache() {

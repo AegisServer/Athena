@@ -9,9 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.aegis.athena.Athena;
 import net.aegis.athena.features.scoreboard.ScoreboardLine;
-import net.aegis.athena.framework.exceptions.AthenaException;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import net.aegis.athena.framework.persistence.mongodb.models.serializers.UUIDConverter;
 import net.aegis.athena.utils.AthenaScoreboard;
@@ -64,15 +62,6 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	}
 
 	public void on() {
-		if (UUID.fromString("75d63edb-84cc-4d4a-b761-4f81c91b2b7a").equals(uuid)) {
-			try {
-				throw new AthenaException("Turning on keyhole's scoreboard");
-			} catch (AthenaException ex) {
-				Athena.log(ex.getMessage());
-				ex.printStackTrace();
-			}
-		}
-
 		pause();
 		if (scoreboard == null)
 			scoreboard = new AthenaScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Project Eden &e<", getOnlinePlayer());

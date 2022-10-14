@@ -7,7 +7,6 @@ import net.aegis.athena.features.menus.BookBuilder.WrittenBookMenu;
 import net.aegis.athena.framework.commands.models.CustomCommand;
 import net.aegis.athena.framework.commands.models.annotations.Aliases;
 import net.aegis.athena.framework.commands.models.annotations.Description;
-import net.aegis.athena.framework.commands.models.annotations.Disabled;
 import net.aegis.athena.framework.commands.models.annotations.HideFromHelp;
 import net.aegis.athena.framework.commands.models.annotations.Path;
 import net.aegis.athena.framework.commands.models.annotations.Permission;
@@ -28,20 +27,19 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.stream.Collectors;
 
-@Disabled
 @NoArgsConstructor
 @Aliases({"status", "sidebar", "sb", "featherboard"})
 public class ScoreboardCommand extends CustomCommand implements Listener {
-	private final ScoreboardService service = new ScoreboardService();
+	private static final ScoreboardService service = new ScoreboardService();
 	private ScoreboardUser user;
 
-	static {
-		OnlinePlayers.getAll().forEach(player -> {
-			ScoreboardUser user = new ScoreboardService().get(player);
-			if (user.isActive())
-				user.on();
-		});
-	}
+//	static {
+//		OnlinePlayers.getAll().forEach(player -> {
+//			ScoreboardUser user = new ScoreboardService().get(player);
+//			if (user.isActive())
+//				user.on();
+//		});
+//	}
 
 	public ScoreboardCommand(@NonNull CommandEvent event) {
 		super(event);

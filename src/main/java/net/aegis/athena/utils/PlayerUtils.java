@@ -124,16 +124,8 @@ public class PlayerUtils {
 	}
 
 	public static void send(@Nullable Object recipient, @Nullable Object message, @NotNull Object... objects) {
-		Bukkit.broadcastMessage("PlayerUtils: send");
-		if (recipient == null || message == null) {
-			//
-			if (recipient == null)
-				Bukkit.broadcastMessage("recipient == null");
-			if (message == null)
-				Bukkit.broadcastMessage("message == null");
-			//
+		if (recipient == null || message == null)
 			return;
-		}
 
 		if (message instanceof String string && objects.length > 0)
 			message = String.format(string, objects);

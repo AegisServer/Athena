@@ -4,7 +4,6 @@ import lombok.NonNull;
 import net.aegis.athena.framework.commands.models.CustomCommand;
 import net.aegis.athena.framework.commands.models.annotations.Path;
 import net.aegis.athena.framework.commands.models.events.CommandEvent;
-import org.bukkit.Bukkit;
 
 public class DiscordCommand extends CustomCommand {
 
@@ -14,8 +13,6 @@ public class DiscordCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		Bukkit.broadcastMessage("Discord Command");
-
 		send(json()
 				.next("&#9F6E75Click here to join our Discord!")
 				.hover("&#6E759FClick here to open an invite in your browser")

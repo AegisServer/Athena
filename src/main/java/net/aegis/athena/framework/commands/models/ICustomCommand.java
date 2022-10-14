@@ -4,7 +4,16 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.aegis.athena.Athena;
 import net.aegis.athena.framework.commands.Commands;
-import net.aegis.athena.framework.commands.models.annotations.*;
+import net.aegis.athena.framework.commands.models.annotations.Aliases;
+import net.aegis.athena.framework.commands.models.annotations.Arg;
+import net.aegis.athena.framework.commands.models.annotations.Async;
+import net.aegis.athena.framework.commands.models.annotations.Cooldown;
+import net.aegis.athena.framework.commands.models.annotations.Disabled;
+import net.aegis.athena.framework.commands.models.annotations.Environments;
+import net.aegis.athena.framework.commands.models.annotations.Fallback;
+import net.aegis.athena.framework.commands.models.annotations.Path;
+import net.aegis.athena.framework.commands.models.annotations.Permission;
+import net.aegis.athena.framework.commands.models.annotations.Switch;
 import net.aegis.athena.framework.commands.models.cooldown.CooldownService;
 import net.aegis.athena.framework.commands.models.events.CommandEvent;
 import net.aegis.athena.framework.commands.models.events.CommandRunEvent;
@@ -28,10 +37,23 @@ import org.jetbrains.annotations.NotNull;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,9 +64,14 @@ import static net.aegis.athena.framework.commands.models.PathParser.getLiteralWo
 import static net.aegis.athena.framework.commands.models.PathParser.getPathString;
 import static net.aegis.athena.utils.Nullables.isNullOrEmpty;
 import static net.aegis.athena.utils.ReflectionUtils.methodsAnnotatedWith;
-import static net.aegis.athena.utils.StringUtils.*;
+import static net.aegis.athena.utils.StringUtils.COMMA_SPLIT_REGEX;
+import static net.aegis.athena.utils.StringUtils.asParsableDecimal;
+import static net.aegis.athena.utils.StringUtils.camelCase;
 import static net.aegis.athena.utils.UUIDUtils.UUID0;
-import static net.aegis.athena.utils.Utils.*;
+import static net.aegis.athena.utils.Utils.getDefaultPrimitiveValue;
+import static net.aegis.athena.utils.Utils.getMaxValue;
+import static net.aegis.athena.utils.Utils.getMinValue;
+import static net.aegis.athena.utils.Utils.isBoolean;
 
 
 @SuppressWarnings("unused")
@@ -137,7 +164,7 @@ public abstract class ICustomCommand {
 //					.title(confirm.title())
 //					.open(event.getPlayer());
 //		} else
-//			run.run();
+		run.run();
 	}
 
 	public void postProcess() {}

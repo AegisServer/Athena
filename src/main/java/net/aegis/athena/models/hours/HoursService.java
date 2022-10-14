@@ -12,7 +12,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import net.aegis.athena.framework.exceptions.AthenaException;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
-import net.aegis.athena.framework.persistence.mongodb.MongoPlayerServices;
+import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
 import net.aegis.athena.framework.persistence.mongodb.annotations.ObjectClass;
 import net.aegis.athena.utils.StringUtils;
 import net.aegis.athena.utils.Utils;
@@ -42,7 +42,7 @@ import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Projections.computed;
 
 @ObjectClass(Hours.class)
-public class HoursService extends MongoPlayerServices<Hours> {
+public class HoursService extends MongoPlayerService<Hours> {
 	private final static Map<UUID, Hours> cache = new HashMap<>();
 
 	public Map<UUID, Hours> getCache() {
