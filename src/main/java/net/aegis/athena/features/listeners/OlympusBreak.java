@@ -1,6 +1,7 @@
 package net.aegis.athena.features.listeners;
 
 import lombok.NoArgsConstructor;
+import net.aegis.athena.Athena;
 import net.aegis.athena.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -63,8 +64,6 @@ public class OlympusBreak implements Listener {
 		return (ItemStack) block.getDrops().toArray()[0];
 	}
 
-	String aegisRed = "#9F6E75";
-
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
@@ -78,7 +77,7 @@ public class OlympusBreak implements Listener {
 		event.setCancelled(true);
 
 		if (event.getBlock().getType() != Material.WHEAT) {
-			PlayerUtils.send(player, aegisRed + "You cannot break that here");
+			PlayerUtils.send(player, Athena.aegisRed + "You cannot break that here");
 			return;
 		}
 

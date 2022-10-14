@@ -2,7 +2,6 @@ package net.aegis.athena;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.multiverseinventories.MultiverseInventories;
-import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -223,7 +222,7 @@ public final class Athena extends JavaPlugin {
 
 		List<Runnable> tasks = List.of(
 				() -> {PlayerUtils.runCommandAsConsole("save-all");},
-				() -> {if (cron.isStarted()) cron.stop();},
+//				() -> {if (cron.isStarted()) cron.stop();},
 				() -> {if (commands != null) commands.unregisterAll();},
 				() -> {if (features != null) features.unregisterExcept(Chat.class);},
 				() -> {if (features != null) features.unregister(Chat.class);},
@@ -256,9 +255,9 @@ public final class Athena extends JavaPlugin {
 		saveConfig();
 	}
 
-	@Getter
+	//	@Getter
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
-	private static final Scheduler cron = new Scheduler();
+//	private static final Scheduler cron = new Scheduler();
 	@Getter
 	private static MultiverseCore multiverseCore;
 	@Getter
@@ -331,7 +330,7 @@ public final class Athena extends JavaPlugin {
 //		signMenuFactory = new SignMenuFactory(this);
 		multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
 		multiverseInventories = (MultiverseInventories) Bukkit.getPluginManager().getPlugin("Multiverse-Inventories");
-		cron.start();
+//		cron.start();
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 		if (lpProvider != null)
 			luckPerms = lpProvider.getProvider();
