@@ -110,22 +110,30 @@ public class PlayerUtils {
 		NerdService nerdService = new NerdService();
 
 		Nerd fromAlias = nerdService.getFromAlias(partialName);
-//		if (fromAlias != null)
-//			return fromAlias.getOfflinePlayer();
+		if (fromAlias != null)
+			return fromAlias.getOfflinePlayer();
 
 		List<Nerd> matches = nerdService.find(partialName);
 		if (matches.size() > 0) {
 			Nerd nerd = matches.get(0);
-//			if (nerd != null)
-//				return nerd.getOfflinePlayer();
+			if (nerd != null)
+				return nerd.getOfflinePlayer();
 		}
 
 		throw new PlayerNotFoundException(original);
 	}
 
 	public static void send(@Nullable Object recipient, @Nullable Object message, @NotNull Object... objects) {
-		if (recipient == null || message == null)
+		Bukkit.broadcastMessage("PlayerUtils: send");
+		if (recipient == null || message == null) {
+			//
+			if (recipient == null)
+				Bukkit.broadcastMessage("recipient == null");
+			if (message == null)
+				Bukkit.broadcastMessage("message == null");
+			//
 			return;
+		}
 
 		if (message instanceof String string && objects.length > 0)
 			message = String.format(string, objects);
@@ -142,8 +150,9 @@ public class PlayerUtils {
 
 		else if (recipient instanceof OfflinePlayer offlinePlayer) {
 			Player player = offlinePlayer.getPlayer();
-			if (player != null)
+			if (player != null) {
 				send(player, message);
+			}
 		}
 
 		else if (recipient instanceof UUID uuid)
