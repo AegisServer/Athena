@@ -3,8 +3,11 @@ package net.aegis.athena.utils;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import net.aegis.athena.Athena;
 import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
 import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotFoundException;
+import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import net.aegis.athena.models.nerd.Nerd;
 import net.aegis.athena.models.nerd.NerdService;
 import net.aegis.athena.models.nerd.Rank;
@@ -145,9 +148,7 @@ public class PlayerUtils {
 			if (player != null) {
 				send(player, message);
 			}
-		}
-
-		else if (recipient instanceof UUID uuid)
+		} else if (recipient instanceof UUID uuid)
 			send(getPlayer(uuid), message);
 
 		else if (recipient instanceof Identity identity)
@@ -155,6 +156,49 @@ public class PlayerUtils {
 
 		else if (recipient instanceof Identified identified)
 			send(getPlayer(identified.identity()), message);
+	}
+
+	public enum Dev implements PlayerOwnedObject {
+		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
+		CYN("1d70383f-21ba-4b8b-a0b4-6c327fbdade1"),
+		;
+
+		@Getter
+		private final UUID uuid;
+
+		public static Dev of(UUID uuid) {
+			for (Dev dev : values())
+				if (dev.getUuid().equals(uuid))
+					return dev;
+			return null;
+		}
+
+		public @NotNull UUID getUniqueId() {return uuid;}
+
+		Dev(String uuid) {
+			this.uuid = UUID.fromString(uuid);
+		}
+
+		public void send(Object message) {
+			PlayerUtils.send(this, message);
+		}
+
+		public void send(String message, Object... args) {
+			send(message.formatted(args));
+		}
+
+		public void debug(Object message) {
+			if (Athena.isDebug())
+				PlayerUtils.send(this, message);
+		}
+
+		public boolean is(UUID uuid) {
+			return this.uuid.equals(uuid);
+		}
+
+		public boolean isNot(Player player) {
+			return !is(player.getUniqueId());
+		}
 	}
 
 	public static class OnlinePlayers {

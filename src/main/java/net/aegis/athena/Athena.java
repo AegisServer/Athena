@@ -11,6 +11,8 @@ import net.aegis.athena.features.listeners.common.TemporaryListener;
 import net.aegis.athena.framework.commands.Commands;
 import net.aegis.athena.framework.features.Features;
 import net.aegis.athena.framework.persistence.mongodb.MongoService;
+import net.aegis.athena.models.nerd.Nerd;
+import net.aegis.athena.models.nerd.Rank;
 import net.aegis.athena.utils.EnumUtils;
 import net.aegis.athena.utils.Env;
 import net.aegis.athena.utils.LuckPermsUtils;
@@ -21,7 +23,6 @@ import net.aegis.athena.utils.ReflectionUtils;
 import net.aegis.athena.utils.Tasks;
 import net.aegis.athena.utils.Timer;
 import net.aegis.athena.utils.Utils;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,7 +33,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.InvocationTargetException;
@@ -55,8 +55,6 @@ public final class Athena extends JavaPlugin {
 	private static Thread thread;
 	public static final LocalDateTime EPOCH = LocalDateTime.now();
 	private static API api;
-
-	private BukkitAudiences adventure;
 
 	public Athena() {
 		if (instance == null) {
@@ -150,13 +148,6 @@ public final class Athena extends JavaPlugin {
 		}
 	}
 
-	public @NonNull BukkitAudiences adventure() {
-		if (this.adventure == null) {
-			throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
-		}
-		return this.adventure;
-	}
-
 	public final static String aegisBlue = "&#6E759F";
 	public final static String aegisRed = "&#9F6E75";
 	public final static String aegisBeige = "&#C1BCAB";
@@ -201,11 +192,6 @@ public final class Athena extends JavaPlugin {
 		});
 
 		//end of command registry
-
-		//kyori adventure registry
-		this.adventure = BukkitAudiences.create(this);
-		//end of kyori adventure registry
-
 	}
 
 	@Override
@@ -213,14 +199,8 @@ public final class Athena extends JavaPlugin {
 	public void onDisable() {
 		// Plugin shutdown logic
 
-		//kyori adventure shutdown logic
-		if(this.adventure != null) {
-			this.adventure.close();
-			this.adventure = null;
-		}
-		//end of kyori adventure
-
 		List<Runnable> tasks = List.of(
+				() -> {broadcastReload();},
 				() -> {PlayerUtils.runCommandAsConsole("save-all");},
 //				() -> {if (cron.isStarted()) cron.stop();},
 				() -> {if (commands != null) commands.unregisterAll();},
@@ -233,6 +213,22 @@ public final class Athena extends JavaPlugin {
 				() -> {if (api != null) api.shutdown();} // last
 		);
 
+		for (Runnable task : tasks) {
+			try {
+				task.run();
+			} catch (Throwable ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	public void broadcastReload() {
+		if (luckPerms == null)
+			return;
+
+		Rank.getOnlineStaff().stream()
+				.map(Nerd::getPlayer)
+				.forEach(player -> PlayerUtils.send(player, " &c&l ! &c&l! &eReloading Athena &c&l! &c&l!"));
 	}
 
 	private void setupConfig() {

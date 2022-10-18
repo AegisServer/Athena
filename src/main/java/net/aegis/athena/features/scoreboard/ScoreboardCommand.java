@@ -28,7 +28,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.stream.Collectors;
 
-@Disabled
+@Disabled // TODO DATABASE: remove line
 @NoArgsConstructor
 @Aliases({"status", "sidebar", "sb", "featherboard"})
 public class ScoreboardCommand extends CustomCommand implements Listener {

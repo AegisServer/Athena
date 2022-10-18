@@ -47,8 +47,8 @@ dependencies {
 }
 
 group = "net.aegis"
-version = "1.1"
 description = "Athena"
+version = "1.1" // keep in sync with plugin.yml
 
 publishing {
     publications.create<MavenPublication>("maven") {
@@ -56,14 +56,10 @@ publishing {
     }
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+java { toolchain.languageVersion.set(JavaLanguageVersion.of(17)) }
 
 tasks {
-    assemble {
-        dependsOn(reobfJar)
-    }
+    assemble { dependsOn(reobfJar) }
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
@@ -77,7 +73,6 @@ tasks {
         filteringCharset = Charsets.UTF_8.name()
     }
 }
-
 
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
