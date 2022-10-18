@@ -228,7 +228,7 @@ public final class Athena extends JavaPlugin {
 
 		Rank.getOnlineStaff().stream()
 				.map(Nerd::getPlayer)
-				.forEach(player -> PlayerUtils.send(player, " &c&l ! &c&l! &eReloading Athena &c&l! &c&l!"));
+				.forEach(player -> PlayerUtils.send(player, " &c&l ! &c&l! " + aegisBlue + "Reloading Athena &c&l! &c&l!"));
 	}
 
 	private void setupConfig() {

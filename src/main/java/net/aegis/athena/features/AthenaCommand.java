@@ -56,7 +56,7 @@ public class AthenaCommand extends CustomCommand {
 
 	@Path("uptime")
 	void uptime() {
-		send(PREFIX + "Up for &e" + Timespan.of(Athena.EPOCH).format());
+		send(PREFIX + "Up for" + Athena.aegisBeige + " " + Timespan.of(Athena.EPOCH).format());
 	}
 
 	@Path("gc")
