@@ -1,6 +1,7 @@
 package net.aegis.athena.features.listeners;
 
 import lombok.NoArgsConstructor;
+import net.aegis.athena.framework.commands.models.annotations.Disabled;
 import net.aegis.athena.utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,6 +13,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+@Disabled
 @NoArgsConstructor
 public class RandomSpawn implements Listener {
 
