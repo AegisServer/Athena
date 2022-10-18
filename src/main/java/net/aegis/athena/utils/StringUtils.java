@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.aegis.athena.API;
+import net.aegis.athena.Athena;
 import net.aegis.athena.framework.exceptions.AthenaException;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -21,7 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.awt.Color;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -69,7 +70,7 @@ public class StringUtils {
 	}
 
 	public static String getPrefix(String prefix) {
-		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
+		return colorize("&8&l[" + Athena.aegisRed + prefix + "&8&l]" + Athena.aegisBlue + " ");
 	}
 
 	public static String colorize(String input) {
