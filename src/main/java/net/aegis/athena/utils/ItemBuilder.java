@@ -635,12 +635,112 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return new NBTItem(build());
 	}
 
-	public ItemBuilder modelId(int id) {
-//		if (id > 0)
-//			nbt(item -> item.setInteger(CustomModel.NBT_KEY, id));
-		return this;
+	@AllArgsConstructor
+	public enum ItemSetting {
+		/**
+		 * Whether an item can be dropped
+		 */
+		DROPPABLE(true),
+		/**
+		 * Whether an item can be placed in an item frame
+		 */
+		FRAMEABLE(true),
+		/**
+		 * Whether an item can be placed
+		 */
+		PLACEABLE(true),
+		/**
+		 * Whether an item can be stored in containers
+		 */
+		STORABLE(true),
+		/**
+		 * Whether an item can be put in the {@code /trash}
+		 */
+		TRASHABLE(true),
+		//		/**
+//		 * Whether an item can be sold in shops
+//		 */
+//		TRADEABLE(true) {
+//			@Override
+//			public boolean of(ItemBuilder builder, boolean orDefault) {
+//				if (Backpacks.isBackpack(builder.build()))
+//					return false;
+//
+//				return super.of(builder, orDefault);
+//			}
+//		},
+		MCMMOABLE(true),
+		;
+
+		private final boolean orDefault;
+
+		public String getKey() {
+			return name().toLowerCase();
+		}
+
+		public boolean of(ItemBuilder builder, boolean orDefault) {
+			NBTItem item = builder.nbtItem();
+			if (!item.hasKey(getKey()))
+				return orDefault;
+
+			return item.getBoolean(getKey());
+		}
+
+		public final boolean of(ItemBuilder builder) {
+			return of(builder, orDefault);
+		}
 	}
 
+	public ItemBuilder setting(ItemSetting setting, boolean value) {
+		return nbt(nbt -> nbt.setBoolean(setting.getKey(), value));
+	}
+
+	public ItemBuilder unset(ItemSetting setting) {
+		return nbt(nbt -> nbt.removeKey(setting.getKey()));
+	}
+
+	public boolean is(ItemSetting setting) {
+		return setting.of(this);
+	}
+
+	public boolean isNot(ItemSetting setting) {
+		return !is(setting);
+	}
+
+	public boolean is(ItemSetting setting, boolean orDefault) {
+		return setting.of(this, orDefault);
+	}
+
+	public ItemBuilder undroppable() {
+		return setting(ItemSetting.DROPPABLE, false);
+	}
+
+	public ItemBuilder unframeable() {
+		return setting(ItemSetting.FRAMEABLE, false);
+	}
+
+	public ItemBuilder unplaceable() {
+		return setting(ItemSetting.PLACEABLE, false);
+	}
+
+	public ItemBuilder unstorable() {
+		return setting(ItemSetting.STORABLE, false);
+	}
+
+	public ItemBuilder untrashable() {
+		return setting(ItemSetting.TRASHABLE, false);
+	}
+
+//	public ItemBuilder untradeable() {
+//		return setting(ItemSetting.TRADEABLE, false);
+//	}
+
+//	public ItemBuilder modelId(int id) {
+//		if (id > 0)
+//			nbt(item -> item.setInteger(CustomModel.NBT_KEY, id));
+//		return this;
+//	}
+//
 //	public int modelId() {
 //		NBTItem nbtItem = nbtItem();
 //		final Integer modelId = nbtItem.getInteger(CustomModel.NBT_KEY);
@@ -659,7 +759,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 //		public static int of(ItemBuilder item) {
 //			return item.modelId();
 //		}
-
+//
 //		public static boolean hasModelId(ItemStack item) {
 //			return of(item) != 0;
 //		}
