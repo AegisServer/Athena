@@ -13,8 +13,10 @@ import net.aegis.athena.framework.commands.models.annotations.Path;
 import net.aegis.athena.framework.commands.models.annotations.Permission;
 import net.aegis.athena.framework.commands.models.annotations.Permission.Group;
 import net.aegis.athena.framework.commands.models.annotations.Switch;
+import net.aegis.athena.framework.commands.models.cooldown.CooldownService;
 import net.aegis.athena.framework.commands.models.events.CommandEvent;
 import net.aegis.athena.framework.exceptions.AthenaException;
+import net.aegis.athena.framework.exceptions.postconfigured.CommandCooldownException;
 import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
 import net.aegis.athena.framework.features.Features;
 import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
@@ -45,6 +47,7 @@ import java.util.UUID;
 import java.util.zip.ZipFile;
 
 import static net.aegis.athena.utils.Nullables.isNullOrEmpty;
+import static net.aegis.athena.utils.UUIDUtils.UUID0;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -144,9 +147,9 @@ public class AthenaCommand extends CustomCommand {
 		}
 
 		// TODO DATABASE: uncomment
-//		CooldownService cooldownService = new CooldownService();
-//		if (!cooldownService.check(UUID0, "reload", TickTime.SECOND.x(15)))
-//			throw new CommandCooldownException(UUID0, "reload");
+		CooldownService cooldownService = new CooldownService();
+		if (!cooldownService.check(UUID0, "reload", TickTime.SECOND.x(15)))
+			throw new CommandCooldownException(UUID0, "reload");
 
 		runCommand("plugman reload Athena");
 	}
