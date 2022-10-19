@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import net.aegis.athena.Athena;
 import net.aegis.athena.framework.commands.models.annotations.ConverterFor;
 import net.aegis.athena.framework.commands.models.annotations.Description;
 import net.aegis.athena.framework.commands.models.annotations.Fallback;
@@ -550,7 +551,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		try {
 			return Integer.parseInt(input);
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument &e" + input + " &cis not a valid integer");
+			throw new InvalidInputException("Argument" + Athena.aegisBeige + input + " &cis not a valid integer");
 		}
 	}
 
@@ -559,7 +560,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		try {
 			return Integer.parseInt(arg(i));
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument &e#" + i + " &cis not a valid integer");
+			throw new InvalidInputException("Argument" + Athena.aegisBeige + " #" + i + " &cis not a valid integer");
 		}
 	}
 
@@ -581,7 +582,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		try {
 			return Double.parseDouble(input);
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument &e" + input + " &cis not a valid double");
+			throw new InvalidInputException("Argument" + Athena.aegisBeige + input + " &cis not a valid double");
 		}
 	}
 
@@ -590,7 +591,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		try {
 			return Double.parseDouble(arg(i));
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument &e#" + i + " &cis not a valid double");
+			throw new InvalidInputException("Argument" + Athena.aegisBeige + i + " &cis not a valid double");
 		}
 	}
 
@@ -612,7 +613,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		try {
 			return Float.parseFloat(input);
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument &e" + input + " &cis not a valid float");
+			throw new InvalidInputException("Argument" + Athena.aegisBeige + input + " &cis not a valid float");
 		}
 	}
 
@@ -621,7 +622,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		try {
 			return Float.parseFloat(arg(i));
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument &e#" + i + " &cis not a valid float");
+			throw new InvalidInputException("Argument" + Athena.aegisBeige + i + " &cis not a valid float");
 		}
 	}
 
@@ -741,7 +742,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		try {
 			return ChatColor.of(value.toUpperCase());
 		} catch (IllegalArgumentException ex) {
-			throw new InvalidInputException("Color &e" + value + "&c not found");
+			throw new InvalidInputException("Color " + Athena.aegisBeige + value + "&c not found");
 		}
 	}
 
@@ -758,7 +759,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	ColorType convertToColorType(String value) {
 		ColorType color = ColorType.of(value.replace('_', ' ').toLowerCase());
 		if (color == null)
-			throw new InvalidInputException("Color &e" + value + "&c not found");
+			throw new InvalidInputException("Color " + Athena.aegisBeige + value + "&c not found");
 		return color;
 	}
 
@@ -801,7 +802,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (enchantment == null) {
 			enchantment = Enchantment.getByName(value);
 			if (enchantment == null)
-				throw new InvalidInputException("Enchantment from &e" + value + "&c not found");
+				throw new InvalidInputException("Enchantment from " + Athena.aegisBeige + value + "&c not found");
 		}
 		return enchantment;
 	}
@@ -871,14 +872,14 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (first)
 			buttons.next("&7 « Previous  &3");
 		else
-			buttons.next("&e « Previous  &3").command(command + " " + (page - 1));
+			buttons.next(Athena.aegisBeige + " « Previous  &3").command(command + " " + (page - 1));
 
-		buttons.group().next("&3|&3|").group();
+		buttons.group().next(Athena.aegisBeige + "||").group();
 
 		if (last)
 			buttons.next("  &7Next »");
 		else
-			buttons.next("  &eNext »").command(command + " " + (page + 1));
+			buttons.next(Athena.aegisBeige + "  Next »").command(command + " " + (page + 1));
 
 		send(buttons.group());
 	}
@@ -902,7 +903,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected void help() {
 		List<String> aliases = getAllAliases();
 		if (aliases.size() > 1)
-			send(PREFIX + "Aliases: " + String.join("&e, &3", aliases));
+			send(PREFIX + "Aliases: " + String.join(Athena.aegisBeige + ", " + Athena.aegisBlue, aliases));
 
 		List<JsonBuilder> lines = new ArrayList<>();
 		final List<Method> methods = getPathMethodsForDisplay(event)
@@ -939,7 +940,7 @@ public abstract class CustomCommand extends ICustomCommand {
 					suggestion.append(word).append(" ");
 			}
 
-			lines.add(json("&c" + usage + description).suggest(suggestion.toString()));
+			lines.add(json(Athena.aegisBeige + usage + description).suggest(suggestion.toString()));
 		});
 
 		if (lines.size() == 0)
