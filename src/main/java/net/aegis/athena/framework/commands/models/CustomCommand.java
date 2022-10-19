@@ -26,6 +26,7 @@ import net.aegis.athena.framework.exceptions.preconfigured.NoPermissionException
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
 import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
 import net.aegis.athena.models.nerd.Nerd;
+import net.aegis.athena.models.nerd.Rank;
 import net.aegis.athena.models.nickname.Nickname;
 import net.aegis.athena.utils.ColorType;
 import net.aegis.athena.utils.ItemUtils;
@@ -37,6 +38,7 @@ import net.aegis.athena.utils.StringUtils;
 import net.aegis.athena.utils.TimeUtils.Timespan;
 import net.aegis.athena.utils.UUIDUtils;
 import net.aegis.athena.utils.WorldGuardUtils;
+import net.aegis.athena.utils.worldgroup.WorldGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -210,6 +212,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		return (Player) targetEntity;
 	}
 
+	protected Rank rank() {
+		return Rank.of(player());
+	}
+
 	protected Location location() {
 		if (isCommandBlock())
 			return commandBlock().getBlock().getLocation();
@@ -222,6 +228,10 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected World world() {
 		return location().getWorld();
+	}
+
+	protected WorldGroup worldGroup() {
+		return WorldGroup.of(location());
 	}
 
 	protected PlayerInventory inventory() {
@@ -474,6 +484,42 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected boolean isSelf(OfflinePlayer self, OfflinePlayer player) {
 		return isPlayer() && self.getUniqueId().equals(player.getUniqueId());
+	}
+
+	protected boolean isStaff() {
+		return !isPlayer() || isStaff(player());
+	}
+
+	protected boolean isStaff(Player player) {
+		return isPlayer(player) && Rank.of(player).isStaff();
+	}
+
+	protected boolean isStaff(OfflinePlayer player) {
+		return isOfflinePlayer(player) && Rank.of(player).isStaff();
+	}
+
+	protected boolean isSeniorStaff() {
+		return !isPlayer() || isSeniorStaff(player());
+	}
+
+	protected boolean isSeniorStaff(Player player) {
+		return isPlayer(player) && Rank.of(player).isSeniorStaff();
+	}
+
+	protected boolean isSeniorStaff(OfflinePlayer player) {
+		return isOfflinePlayer(player) && Rank.of(player).isSeniorStaff();
+	}
+
+	protected boolean isAdmin() {
+		return !isPlayer() || isAdmin(player());
+	}
+
+	protected boolean isAdmin(Player player) {
+		return isPlayer(player) && Rank.of(player).isAdmin();
+	}
+
+	protected boolean isAdmin(OfflinePlayer player) {
+		return isOfflinePlayer(player) && Rank.of(player).isAdmin();
 	}
 
 	protected void runCommand(String commandNoSlash) {
