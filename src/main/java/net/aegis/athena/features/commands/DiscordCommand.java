@@ -15,7 +15,7 @@ public class DiscordCommand extends CustomCommand {
 	void run() {
 		send(json()
 				.next("&#9F6E75Click here to join our Discord!")
-				.hover("&#6E759FClick here to open an invite in your browser")
+				.hover("&#6E759FClick here for the invite")
 				.url("https://discord.gg/pUZq9v7uJA")
 		);
 	}
