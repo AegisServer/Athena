@@ -1,6 +1,5 @@
 package net.aegis.athena.framework.commands.models;
 
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.aegis.athena.Athena;
 import net.aegis.athena.framework.commands.Commands;
@@ -450,15 +449,15 @@ public abstract class ICustomCommand {
 		return getCommand(newEvent);
 	}
 
-	List<Method> getPathMethodsForExecution(@NonNull CommandEvent event) {
+	List<Method> getPathMethodsForExecution(CommandEvent event) {
 		return getPathMethods(event, Comparator.comparing(method ->
-				Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
-					.filter(Nullables::isNotNullOrEmpty)
-					.count())
-			.thenComparing(method ->
-				Arrays.stream(getPathString((Method) method).split(" "))
-					.filter(Nullables::isNotNullOrEmpty)
-					.count()));
+						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
+								.filter(Nullables::isNotNullOrEmpty)
+								.count())
+				.thenComparing(method ->
+						Arrays.stream(getPathString((Method) method).split(" "))
+								.filter(Nullables::isNotNullOrEmpty)
+								.count()));
 	}
 
 	List<Method> getPathMethodsForDisplay(CommandEvent event) {

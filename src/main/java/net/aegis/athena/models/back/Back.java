@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
-import net.aegis.athena.framework.persistence.mongodb.models.serializers.LocationConverter;
-import net.aegis.athena.framework.persistence.mongodb.models.serializers.UUIDConverter;
+import net.aegis.athena.framework.persistence.mongodb.serializers.LocationConverter;
+import net.aegis.athena.framework.persistence.mongodb.serializers.UUIDConverter;
 import org.bukkit.Location;
 
 import java.util.ArrayList;

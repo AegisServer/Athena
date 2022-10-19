@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
-import net.aegis.athena.framework.persistence.mongodb.models.serializers.UUIDConverter;
+import net.aegis.athena.framework.persistence.mongodb.serializers.UUIDConverter;
 import net.aegis.athena.utils.worldgroup.WorldGroup;
 import org.bukkit.GameMode;
 

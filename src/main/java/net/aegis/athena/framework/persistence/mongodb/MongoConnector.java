@@ -1,9 +1,9 @@
 package net.aegis.athena.framework.persistence.mongodb;
 
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClients;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import dev.morphia.annotations.Entity;
@@ -30,7 +30,6 @@ public class MongoConnector {
 		if (datastore != null)
 			return datastore;
 
-
 		API.getOptional().ifPresent(api -> {
 			// Properly merge deleted hashmaps and null vars
 			Builder options = MapperOptions.builder().storeEmpties(true).storeNulls(true);
@@ -44,10 +43,13 @@ public class MongoConnector {
 			if (!Nullables.isNullOrEmpty(config.getModelPath()))
 				typesAnnotatedWith(Entity.class, config.getModelPath());
 
-			//TODO CYN
-			MongoCredential root = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
-			MongoClient mongoClient = new MongoClient(new ServerAddress(), root, MongoClientOptions.builder().build());
-			String database = (config.getPrefix() == null ? "" : config.getPrefix() + "_") + "aegis";
+			ConnectionString connectionString = new ConnectionString("mongodb+srv://aegisserver:" + config.getPassword() + "@aegis.knsyfbs.mongodb.net/?retryWrites=true&w=majority");
+			MongoClientSettings settings = MongoClientSettings.builder()
+					.applyConnectionString(connectionString)
+					.build();
+			MongoClient mongoClient = (MongoClient) MongoClients.create(settings);
+
+			String database = (config.getPrefix() == null ? "" : config.getPrefix() + "_") + "aegisserver";
 			datastore = morphia.createDatastore(mongoClient, database);
 			datastore.ensureIndexes();
 

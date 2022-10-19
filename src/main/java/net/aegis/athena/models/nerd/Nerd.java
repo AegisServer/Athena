@@ -19,7 +19,7 @@ import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputExceptio
 import net.aegis.athena.framework.interfaces.Colored;
 import net.aegis.athena.framework.interfaces.IsColoredAndNicknamed;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
-import net.aegis.athena.framework.persistence.mongodb.models.serializers.UUIDConverter;
+import net.aegis.athena.framework.persistence.mongodb.serializers.UUIDConverter;
 import net.aegis.athena.utils.Name;
 import net.aegis.athena.utils.PlayerUtils;
 import net.aegis.athena.utils.UUIDUtils;

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.aegis.athena.features.scoreboard.ScoreboardLine;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
-import net.aegis.athena.framework.persistence.mongodb.models.serializers.UUIDConverter;
+import net.aegis.athena.framework.persistence.mongodb.serializers.UUIDConverter;
 import net.aegis.athena.utils.AthenaScoreboard;
 import net.aegis.athena.utils.Tasks;
 import org.apache.commons.collections4.map.ListOrderedMap;

@@ -12,6 +12,7 @@ import dev.morphia.query.UpdateException;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.aegis.athena.API;
+import net.aegis.athena.Athena;
 import net.aegis.athena.framework.exceptions.AthenaException;
 import net.aegis.athena.framework.interfaces.DatabaseObject;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
@@ -44,7 +45,7 @@ import static net.aegis.athena.utils.ReflectionUtils.subTypesOf;
 import static net.aegis.athena.utils.UUIDUtils.UUID0;
 
 public abstract class MongoService<T extends DatabaseObject> {
-	protected static Datastore database;
+	protected static Datastore database = MongoConnector.connect();
 	protected static String _id = "_id";
 
 	@Getter
@@ -53,10 +54,6 @@ public abstract class MongoService<T extends DatabaseObject> {
 	private static final Map<Class<? extends DatabaseObject>, Class<? extends MongoService>> objectToServiceMap = new HashMap<>();
 	@Getter
 	private static final Map<Class<? extends MongoService>, Class<? extends DatabaseObject>> serviceToObjectMap = new HashMap<>();
-
-	static {
-		database = MongoConnector.connect();
-	}
 
 	public static void loadServices() {
 		loadServices(Collections.emptySet());
@@ -74,7 +71,7 @@ public abstract class MongoService<T extends DatabaseObject> {
 
 			ObjectClass annotation = service.getAnnotation(ObjectClass.class);
 			if (annotation == null) {
-				Log.warn(service.getSimpleName() + " does not have @" + ObjectClass.class.getSimpleName() + " annotation");
+				Athena.warn(service.getSimpleName() + " does not have @" + ObjectClass.class.getSimpleName() + " annotation");
 				continue;
 			}
 
@@ -116,7 +113,7 @@ public abstract class MongoService<T extends DatabaseObject> {
 			final EntityCache entityCache = database.getMapper().createEntityCache();
 			return database.getMapper().fromDBObject(database, clazz, dbObject, entityCache);
 		} catch (ClassNotFoundException ex) {
-			Log.warn("Could not find class " + className);
+			Athena.warn("Could not find class " + className);
 			return null;
 		}
 	}
@@ -263,7 +260,7 @@ public abstract class MongoService<T extends DatabaseObject> {
 		if (object == null)
 			object = createObject(uuid);
 		if (object == null)
-			Log.log("New instance of " + getObjectClass().getSimpleName() + " is null");
+			Athena.log("New instance of " + getObjectClass().getSimpleName() + " is null");
 		return object;
 	}
 
@@ -341,7 +338,7 @@ public abstract class MongoService<T extends DatabaseObject> {
 	protected void handleSaveException(T object, Exception ex, String type) {
 		String toString = object.toString();
 		String extra = toString.length() >= Short.MAX_VALUE ? "" : ": " + toString;
-		Log.warn("Error " + type + " " + object.getClass().getSimpleName() + extra);
+		Athena.warn("Error " + type + " " + object.getClass().getSimpleName() + extra);
 		ex.printStackTrace();
 	}
 

@@ -157,22 +157,9 @@ public final class Athena extends JavaPlugin {
 		// Plugin startup logic
 
 		//config initialization
-		getConfig().options().copyDefaults();
-		saveDefaultConfig();
+//		getConfig().options().copyDefaults();
+//		saveDefaultConfig();
 		//end of config initialization
-
-		//mongodb stuff
-//		String url = getConfig().getString("Url");
-//		MongoClient mongoClient = MongoClients.create(url);
-//		MongoCollection<Document> collection = mongoClient.getDatabase("Aegis").getCollection("users");
-//		log("Connected to Database");
-		//end of mongodb stuff
-
-		//register listener classes
-//		getServer().getPluginManager().registerEvents(new JoinLeave(), this);
-//		getServer().getPluginManager().registerEvents(new RandomSpawn(), this);
-//		getServer().getPluginManager().registerEvents(new OlympusBreak(), this);
-		//end of listener registry
 
 
 		new Timer("Enable", () -> {

@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 import dev.morphia.converters.TypeConverter;
 import net.aegis.athena.framework.persistence.mongodb.DatabaseConfig;
 import net.aegis.athena.framework.persistence.mongodb.MongoConnector;
-import net.aegis.athena.framework.persistence.mongodb.models.serializers.ItemStackConverter;
+import net.aegis.athena.framework.persistence.mongodb.serializers.ItemStackConverter;
 import net.aegis.athena.utils.Env;
 import net.aegis.athena.utils.SerializationUtils.Json.LocalDateGsonSerializer;
 import net.aegis.athena.utils.SerializationUtils.Json.LocalDateTimeGsonSerializer;
