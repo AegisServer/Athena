@@ -1,10 +1,15 @@
 package net.aegis.athena.utils;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.github.classgraph.AnnotationEnumValue;
 import io.github.classgraph.AnnotationInfo;
 import io.github.classgraph.ClassInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import net.aegis.athena.Athena;
 import net.aegis.athena.framework.commands.models.annotations.Disabled;
@@ -14,6 +19,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Contract;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -135,10 +144,41 @@ public class Utils {
 		throw new InvalidInputException("No min/max holder defined for " + type.getSimpleName());
 	}
 
+	public static boolean isWithinBounds(double number, Class<?> type) {
+		return isWithinBounds(BigDecimal.valueOf(number), type);
+	}
+
+	public static boolean isWithinBounds(BigDecimal number, Class<?> type) {
+		final BigDecimal min = BigDecimal.valueOf(getMinValue(type).doubleValue());
+		final BigDecimal max = BigDecimal.valueOf(getMaxValue(type).doubleValue());
+		return number.compareTo(min) >= 0 && number.compareTo(max) <= 0;
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public @interface SerializedExclude {
+	}
+
+	private static final ExclusionStrategy strategy = new ExclusionStrategy() {
+		@Override
+		public boolean shouldSkipClass(Class<?> clazz) {
+			return false;
+		}
+
+		@Override
+		public boolean shouldSkipField(FieldAttributes field) {
+			return field.getAnnotation(SerializedExclude.class) != null;
+		}
+	};
+
+	@Getter
+	private static final Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).create();
+
 	/**
 	 * Removes the first element from an iterable that passes the {@code predicate}.
+	 *
 	 * @param predicate the predicate which returns true when an element should be removed
-	 * @param from collection to remove an object from
+	 * @param from      collection to remove an object from
 	 * @return the object that was removed or null
 	 */
 	@Contract(mutates = "param2")
