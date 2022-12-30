@@ -6,7 +6,6 @@ import net.aegis.athena.framework.commands.models.CustomCommand;
 import net.aegis.athena.framework.commands.models.annotations.Aliases;
 import net.aegis.athena.framework.commands.models.annotations.Arg;
 import net.aegis.athena.framework.commands.models.annotations.Description;
-import net.aegis.athena.framework.commands.models.annotations.Disabled;
 import net.aegis.athena.framework.commands.models.annotations.Path;
 import net.aegis.athena.framework.commands.models.annotations.Permission;
 import net.aegis.athena.framework.commands.models.annotations.Permission.Group;
@@ -27,7 +26,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.text.DecimalFormat;
 
-@Disabled
 @Aliases("return")
 @NoArgsConstructor
 @Description("Return to your previous location after teleporting")

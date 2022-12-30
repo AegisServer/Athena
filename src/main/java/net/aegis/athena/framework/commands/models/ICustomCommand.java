@@ -13,7 +13,6 @@ import net.aegis.athena.framework.commands.models.annotations.Fallback;
 import net.aegis.athena.framework.commands.models.annotations.Path;
 import net.aegis.athena.framework.commands.models.annotations.Permission;
 import net.aegis.athena.framework.commands.models.annotations.Switch;
-import net.aegis.athena.framework.commands.models.cooldown.CooldownService;
 import net.aegis.athena.framework.commands.models.events.CommandEvent;
 import net.aegis.athena.framework.commands.models.events.CommandRunEvent;
 import net.aegis.athena.framework.commands.models.events.CommandTabEvent;
@@ -25,6 +24,7 @@ import net.aegis.athena.framework.exceptions.postconfigured.PlayerNotOnlineExcep
 import net.aegis.athena.framework.exceptions.preconfigured.MissingArgumentException;
 import net.aegis.athena.framework.exceptions.preconfigured.NoPermissionException;
 import net.aegis.athena.framework.interfaces.PlayerOwnedObject;
+import net.aegis.athena.models.cooldown.CooldownService;
 import net.aegis.athena.utils.Nullables;
 import net.aegis.athena.utils.PlayerUtils;
 import net.aegis.athena.utils.StringUtils;

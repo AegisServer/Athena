@@ -43,7 +43,7 @@ public class MongoConnector {
 			if (!Nullables.isNullOrEmpty(config.getModelPath()))
 				typesAnnotatedWith(Entity.class, config.getModelPath());
 
-			ConnectionString connectionString = new ConnectionString("mongodb+srv://aegisserver:" + config.getPassword() + "@aegis.knsyfbs.mongodb.net/?retryWrites=true&w=majority");
+			ConnectionString connectionString = new ConnectionString(config.getLink());
 			MongoClientSettings settings = MongoClientSettings.builder()
 					.applyConnectionString(connectionString)
 					.build();

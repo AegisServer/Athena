@@ -1,4 +1,4 @@
-package net.aegis.athena.framework.commands.models.cooldown;
+package net.aegis.athena.models.cooldown;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;

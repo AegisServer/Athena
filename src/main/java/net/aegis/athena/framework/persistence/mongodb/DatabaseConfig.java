@@ -17,7 +17,7 @@ public class DatabaseConfig {
 	@Builder.Default
 	private String username = "root";
 	@Builder.Default
-	private String password = "password";
+	private String link = "link";
 	private String prefix;
 	private String modelPath;
 

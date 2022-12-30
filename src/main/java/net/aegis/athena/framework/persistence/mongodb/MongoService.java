@@ -64,6 +64,7 @@ public abstract class MongoService<T extends DatabaseObject> {
 	}
 
 	public static void loadServices(Set<Class<? extends MongoService>> newServices) {
+		Athena.log("Loading Services: " + newServices.toString());
 		services.addAll(newServices);
 		for (Class<? extends MongoService> service : services) {
 			if (Modifier.isAbstract(service.getModifiers()))
@@ -75,13 +76,15 @@ public abstract class MongoService<T extends DatabaseObject> {
 				continue;
 			}
 
+			Athena.log("Service loaded: " + service.getSimpleName());
+
 			objectToServiceMap.put(annotation.value(), service);
 			serviceToObjectMap.put(service, annotation.value());
 		}
 	}
 
 	protected Class<T> getObjectClass() {
-		ObjectClass annotation = getClass().getAnnotation(ObjectClass.class);
+		ObjectClass annotation = this.getClass().getAnnotation(ObjectClass.class);
 		return annotation == null ? null : (Class<T>) annotation.value();
 	}
 
@@ -119,54 +122,54 @@ public abstract class MongoService<T extends DatabaseObject> {
 	}
 
 	public MongoCollection<Document> getCollection() {
-		return database.getDatabase().getCollection(getObjectClass().getAnnotation(Entity.class).value());
+		return database.getDatabase().getCollection(this.getObjectClass().getAnnotation(Entity.class).value());
 	}
 
 	public abstract Map<UUID, T> getCache();
 
 	public void clearCache() {
-		getCache().clear();
+		this.getCache().clear();
 	}
 
 	public Collection<T> cacheAll() {
-		database.createQuery(getObjectClass()).find().forEachRemaining(this::cache);
-		return getCache().values();
+		database.createQuery(this.getObjectClass()).find().forEachRemaining(this::cache);
+		return this.getCache().values();
 	}
 
 	public void cache(T object) {
 		if (object != null)
-			getCache().putIfAbsent(object.getUuid(), object);
+			this.getCache().putIfAbsent(object.getUuid(), object);
 	}
 
 	public boolean isCached(T object) {
-		return getCache().containsKey(object.getUuid());
+		return this.getCache().containsKey(object.getUuid());
 	}
 
 	public void add(T object) {
-		cache(object);
-		save(object);
+		this.cache(object);
+		this.save(object);
 	}
 
 	public void saveCache() {
-		saveCache(100);
+		this.saveCache(100);
 	}
 
 	public void saveCache(int threadCount) {
 		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
-		for (T object : new ArrayList<>(getCache().values()))
-			executor.submit(() -> saveSync(object));
+		for (T object : new ArrayList<>(this.getCache().values()))
+			executor.submit(() -> this.saveSync(object));
 	}
 
 	public void saveCacheSync() {
 		for (T object : new ArrayList<>(getCache().values()))
-			saveSync(object);
+			this.saveSync(object);
 	}
 
 	private static final JsonWriterSettings jsonWriterSettings = JsonWriterSettings.builder().indent(true).build();
 
 	public String asPrettyJson(UUID uuid) {
-		final Document document = getCollection().find(new BasicDBObject(Map.of(_id, uuid.toString()))).first();
+		final Document document = this.getCollection().find(new BasicDBObject(Map.of(_id, uuid.toString()))).first();
 		if (document == null)
 			throw new AthenaException("Could not find matching document");
 
@@ -174,99 +177,99 @@ public abstract class MongoService<T extends DatabaseObject> {
 	}
 
 	public T get(String name) {
-		return get(UUID.fromString(name));
+		return this.get(UUID.fromString(name));
 	}
 
 	public T get(Player player) {
-		return get(player.getUniqueId());
+		return this.get(player.getUniqueId());
 	}
 
 	public T get(PlayerOwnedObject object) {
-		return get(object.getUniqueId());
+		return this.get(object.getUniqueId());
 	}
 
 	public T get(OfflinePlayer player) {
-		return get(player.getUniqueId());
+		return this.get(player.getUniqueId());
 	}
 
 	@NotNull
 	public T get(UUID uuid) {
 //		if (isEnableCache())
-		return getCache(uuid);
+		return this.getCache(uuid);
 //		else
 //			return getNoCache(uuid);
 	}
 
 	public T get0() {
-		return get(UUID0);
+		return this.get(UUID0);
 	}
 
 	public T getApp() {
-		return get(API.get().getAppUuid());
+		return this.get(API.get().getAppUuid());
 	}
 
 	public void edit(String uuid, Consumer<T> consumer) {
-		edit(get(uuid), consumer);
+		this.edit(this.get(uuid), consumer);
 	}
 
 	public void edit(UUID uuid, Consumer<T> consumer) {
-		edit(get(uuid), consumer);
+		this.edit(this.get(uuid), consumer);
 	}
 
 	public void edit(T object, Consumer<T> consumer) {
 		consumer.accept(object);
-		save(object);
+		this.save(object);
 	}
 
 	public void edit0(Consumer<T> consumer) {
-		edit(get0(), consumer);
+		this.edit(this.get0(), consumer);
 	}
 
 	public void editApp(Consumer<T> consumer) {
-		edit(getApp(), consumer);
+		this.edit(this.getApp(), consumer);
 	}
 
 	public void save(T object) {
-		checkType(object);
-		saveSync(object);
+		this.checkType(object);
+		this.saveSync(object);
 	}
 
 	private void checkType(T object) {
-		if (getObjectClass() == null) return;
-		if (!getObjectClass().isAssignableFrom(object.getClass()))
+		if (this.getObjectClass() == null) return;
+		if (!this.getObjectClass().isAssignableFrom(object.getClass()))
 			throw new AthenaException(this.getClass().getSimpleName() + " received wrong class type, expected "
-					+ getObjectClass().getSimpleName() + ", found " + object.getClass().getSimpleName());
+					+ this.getObjectClass().getSimpleName() + ", found " + object.getClass().getSimpleName());
 	}
 
 	public void delete(T object) {
-		checkType(object);
-		deleteSync(object);
+		this.checkType(object);
+		this.deleteSync(object);
 	}
 
 	public void deleteAll() {
-		deleteAllSync();
+		this.deleteAllSync();
 	}
 
 	@NotNull
 	protected T getCache(UUID uuid) {
-		Objects.requireNonNull(getObjectClass(), "You must provide an owning class or override get(UUID)");
-		if (getCache().containsKey(uuid) && getCache().get(uuid) == null)
-			getCache().remove(uuid);
-		return getCache().computeIfAbsent(uuid, $ -> getNoCache(uuid));
+		Objects.requireNonNull(this.getObjectClass(), "You must provide an owning class or override get(UUID)");
+		if (this.getCache().containsKey(uuid) && this.getCache().get(uuid) == null)
+			this.getCache().remove(uuid);
+		return this.getCache().computeIfAbsent(uuid, $ -> this.getNoCache(uuid));
 	}
 
 	protected T getNoCache(UUID uuid) {
-		T object = database.createQuery(getObjectClass()).field(_id).equal(uuid).first();
+		T object = database.createQuery(this.getObjectClass()).field(_id).equal(uuid).first();
 		if (object == null)
-			object = createObject(uuid);
+			object = this.createObject(uuid);
 		if (object == null)
-			Athena.log("New instance of " + getObjectClass().getSimpleName() + " is null");
+			Athena.log("New instance of " + this.getObjectClass().getSimpleName() + " is null");
 		return object;
 	}
 
 	protected T createObject(UUID uuid) {
 		try {
-			Constructor<? extends DatabaseObject> constructor = getObjectClass().getDeclaredConstructor(UUID.class);
+			Constructor<? extends DatabaseObject> constructor = this.getObjectClass().getDeclaredConstructor(UUID.class);
 			constructor.setAccessible(true);
 			return (T) constructor.newInstance(uuid);
 		} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException ex) {
@@ -276,25 +279,25 @@ public abstract class MongoService<T extends DatabaseObject> {
 	}
 
 	public List<T> getPage(int page, int amount) {
-		return database.createQuery(getObjectClass()).offset((page - 1) * amount).limit(amount).find().toList();
+		return database.createQuery(this.getObjectClass()).offset((page - 1) * amount).limit(amount).find().toList();
 	}
 
 	public List<T> getAll() {
-		return database.createQuery(getObjectClass()).find().toList();
+		return database.createQuery(this.getObjectClass()).find().toList();
 	}
 
 	public List<T> getAllLimit(int limit) {
-		return database.createQuery(getObjectClass()).limit(limit).find().toList();
+		return database.createQuery(this.getObjectClass()).limit(limit).find().toList();
 	}
 
 	public List<T> getAllSortedBy(Sort... sorts) {
-		return database.createQuery(getObjectClass())
+		return database.createQuery(this.getObjectClass())
 				.order(sorts)
 				.find().toList();
 	}
 
 	public List<T> getAllSortedByLimit(int limit, Sort... sorts) {
-		return database.createQuery(getObjectClass())
+		return database.createQuery(this.getObjectClass())
 				.order(sorts)
 				.limit(limit)
 				.find().toList();
@@ -311,14 +314,14 @@ public abstract class MongoService<T extends DatabaseObject> {
 	}
 
 	public void saveSync(T object) {
-		beforeSave(object);
+		this.beforeSave(object);
 
-		if (deleteIf(object)) {
-			deleteSync(object);
+		if (this.deleteIf(object)) {
+			this.deleteSync(object);
 			return;
 		}
 
-		saveSyncReal(object);
+		this.saveSyncReal(object);
 	}
 
 	protected void saveSyncReal(T object) {
@@ -328,10 +331,10 @@ public abstract class MongoService<T extends DatabaseObject> {
 			try {
 				database.save(object);
 			} catch (Exception ex2) {
-				handleSaveException(object, ex2, "saving");
+				this.handleSaveException(object, ex2, "saving");
 			}
 		} catch (Exception ex3) {
-			handleSaveException(object, ex3, "updating");
+			this.handleSaveException(object, ex3, "updating");
 		}
 	}
 
@@ -343,24 +346,24 @@ public abstract class MongoService<T extends DatabaseObject> {
 	}
 
 	public void deleteSync(T object) {
-		beforeDelete(object);
+		this.beforeDelete(object);
 
-		getCache().remove(object.getUuid());
+		this.getCache().remove(object.getUuid());
 		database.delete(object);
-		getCache().remove(object.getUuid());
+		this.getCache().remove(object.getUuid());
 		object = null;
 	}
 
 	public void deleteAllSync() {
-		database.getCollection(getObjectClass()).drop();
-		clearCache();
+		database.getCollection(this.getObjectClass()).drop();
+		this.clearCache();
 	}
 
 	@NotNull
 	protected <U> List<U> map(AggregateIterable<Document> documents, Class<U> clazz) {
 		return new ArrayList<>() {{
 			for (Document purchase : documents)
-				add(database.getMapper().fromDBObject(database, clazz, new BasicDBObject(purchase), null));
+				this.add(database.getMapper().fromDBObject(database, clazz, new BasicDBObject(purchase), null));
 		}};
 	}
 

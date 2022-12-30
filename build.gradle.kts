@@ -35,7 +35,9 @@ dependencies {
     implementation("org.apache.commons:commons-collections4:4.4")
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
+        exclude("*", "*")
+    }
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.10.0")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.4.7")
@@ -44,6 +46,7 @@ dependencies {
     compileOnly("me.lucko:helper:5.6.13")
     compileOnly("me.lucko:spark-api:0.1-SNAPSHOT")
     compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
+    compileOnly("org.apache.commons:commons-configuration2:2.8.0")
 }
 
 group = "net.aegis"

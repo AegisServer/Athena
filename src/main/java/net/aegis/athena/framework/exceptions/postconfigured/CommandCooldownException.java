@@ -1,6 +1,6 @@
 package net.aegis.athena.framework.exceptions.postconfigured;
 
-import net.aegis.athena.framework.commands.models.cooldown.CooldownService;
+import net.aegis.athena.models.cooldown.CooldownService;
 import net.aegis.athena.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 

@@ -1,8 +1,8 @@
-package net.aegis.athena.framework.commands.models.cooldown;
+package net.aegis.athena.models.cooldown;
 
 import net.aegis.athena.Athena;
-import net.aegis.athena.framework.commands.models.annotations.ObjectClass;
 import net.aegis.athena.framework.persistence.mongodb.MongoPlayerService;
+import net.aegis.athena.framework.persistence.mongodb.annotations.ObjectClass;
 import net.aegis.athena.utils.PlayerUtils;
 import net.aegis.athena.utils.Tasks;
 import net.aegis.athena.utils.TimeUtils.TickTime;
