@@ -77,7 +77,7 @@ public class OlympusBreak implements Listener {
 		event.setCancelled(true);
 
 		if (event.getBlock().getType() != Material.WHEAT) {
-			PlayerUtils.send(player, Athena.aegisRed + "You cannot break that here");
+			PlayerUtils.send(player, Athena.aegisPrimary + "You cannot break that here");
 			return;
 		}
 

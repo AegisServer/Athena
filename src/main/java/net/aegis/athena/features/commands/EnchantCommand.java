@@ -42,7 +42,7 @@ public class EnchantCommand extends CustomCommand {
 
 			tool.setItemMeta(meta);
 
-			send(PREFIX + "Added enchant " + Athena.aegisBeige + camelCase(enchantment.getKey().getKey()) + " " + level);
+			send(PREFIX + "Added enchant " + Athena.aegisAccent + camelCase(enchantment.getKey().getKey()) + " " + level);
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInputException(ex.getMessage());
 		}
@@ -53,12 +53,12 @@ public class EnchantCommand extends CustomCommand {
 		final ItemStack tool = getToolRequired();
 		tool.removeEnchantment(enchantment);
 
-		send(PREFIX + "Removed enchant " + Athena.aegisBeige + camelCase(enchantment.getKey().getKey()));
+		send(PREFIX + "Removed enchant " + Athena.aegisAccent + camelCase(enchantment.getKey().getKey()));
 	}
 
 	@Path("get <enchant>")
 	void get(Enchantment enchantment) {
-		send(PREFIX + "Level of " + Athena.aegisBeige + camelCase(enchantment.getKey().getKey()) + Athena.aegisBlue + ": " + Athena.aegisBeige + getToolRequired().getEnchantmentLevel(enchantment));
+		send(PREFIX + "Level of " + Athena.aegisAccent + camelCase(enchantment.getKey().getKey()) + Athena.aegisSecondary + ": " + Athena.aegisAccent + getToolRequired().getEnchantmentLevel(enchantment));
 	}
 
 }

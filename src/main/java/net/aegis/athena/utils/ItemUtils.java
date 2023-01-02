@@ -1,21 +1,12 @@
 package net.aegis.athena.utils;
 
-import lombok.Data;
 import net.aegis.athena.framework.exceptions.postconfigured.InvalidInputException;
-import net.minecraft.world.effect.MobEffect;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;

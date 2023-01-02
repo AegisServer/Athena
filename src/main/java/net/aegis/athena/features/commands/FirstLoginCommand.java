@@ -30,7 +30,7 @@ public class FirstLoginCommand extends CustomCommand {
 
 	@Path("[player]")
 	void firstJoin(@Arg("self") Nerd nerd) {
-		send(Athena.aegisBlue + "&l" + Nickname.of(nerd) + Athena.aegisRed + " first joined Aegis on " + Athena.aegisBlue + longDateTimeFormat(nerd.getFirstJoin()) + Athena.aegisRed + " US Eastern Time");
+		send(Athena.aegisSecondary + "&l" + Nickname.of(nerd) + Athena.aegisPrimary + " first joined Aegis on " + Athena.aegisSecondary + longDateTimeFormat(nerd.getFirstJoin()) + Athena.aegisPrimary + " US Eastern Time");
 	}
 
 	@Permission(Group.ADMIN)
@@ -38,7 +38,7 @@ public class FirstLoginCommand extends CustomCommand {
 	void set(Nerd nerd, LocalDateTime dateTime) {
 		nerd.setFirstJoin(dateTime);
 		new NerdService().save(nerd);
-		send(PREFIX + "Updated first join of " + Athena.aegisBeige + nerd.getNickname() + Athena.aegisBlue + " to " + Athena.aegisBeige + TimeUtils.shortDateTimeFormat(dateTime));
+		send(PREFIX + "Updated first join of " + Athena.aegisAccent + nerd.getNickname() + Athena.aegisSecondary + " to " + Athena.aegisAccent + TimeUtils.shortDateTimeFormat(dateTime));
 	}
 
 	@Async

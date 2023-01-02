@@ -70,7 +70,7 @@ public class StringUtils {
 	}
 
 	public static String getPrefix(String prefix) {
-		return colorize("&8&l[" + Athena.aegisRed + prefix + "&8&l]" + Athena.aegisBlue + " ");
+		return colorize("&8&l[" + Athena.aegisPrimary + prefix + "&8&l]" + Athena.aegisSecondary + " ");
 	}
 
 	public static String colorize(String input) {

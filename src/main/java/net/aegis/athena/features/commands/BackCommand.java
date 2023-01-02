@@ -57,17 +57,17 @@ public class BackCommand extends CustomCommand implements Listener {
 			error("You have no Back locations");
 
 		int i = 0;
-		JsonBuilder json = json(PREFIX + "Locations (" + Athena.aegisBlue + "Click to go" + Athena.aegisRed + "):");
+		JsonBuilder json = json(PREFIX + "Locations (" + Athena.aegisSecondary + "Click to go" + Athena.aegisPrimary + "):");
 
 		for (Location location : back.getLocations()) {
 			++i;
 			int x = (int) location.getX(), y = (int) location.getY(), z = (int) location.getZ(),
 					yaw = (int) location.getYaw(), pitch = (int) location.getPitch();
 			json.group().newline()
-					.next(Athena.aegisRed + new DecimalFormat("#00").format(i) + " " + Athena.aegisRed + location.getWorld().getName() +
-							" &7/ " + Athena.aegisRed + x + " &7/ " + Athena.aegisRed + y + " &7/ " + Athena.aegisRed + z)
+					.next(Athena.aegisPrimary + new DecimalFormat("#00").format(i) + " " + Athena.aegisPrimary + location.getWorld().getName() +
+							" &7/ " + Athena.aegisPrimary + x + " &7/ " + Athena.aegisPrimary + y + " &7/ " + Athena.aegisPrimary + z)
 					.command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + location.getWorld().getName())
-					.hover(Athena.aegisBlue + "Click to teleport");
+					.hover(Athena.aegisSecondary + "Click to teleport");
 		}
 
 		send(json);

@@ -80,15 +80,15 @@ public class SpeedCommand extends CustomCommand {
 	}
 
 	private void tell(float speed, Player player, String type) {
-		send(player, PREFIX + type + " speed set to " + Athena.aegisBeige + speed);
+		send(player, PREFIX + type + " speed set to " + Athena.aegisAccent + speed);
 		if (!isSelf(player))
-			send(PREFIX + type + " speed set to " + Athena.aegisBeige + speed + Athena.aegisBlue + " for " + Athena.aegisBeige + player.getName());
+			send(PREFIX + type + " speed set to " + Athena.aegisAccent + speed + Athena.aegisSecondary + " for " + Athena.aegisAccent + player.getName());
 	}
 
 	private void tellReset(@Arg(value = "self", permission = Group.STAFF) Player player, String type) {
 		send(player, PREFIX + type + " speed reset");
 		if (!isSelf(player))
-			send(PREFIX + type + " speed reset for " + Athena.aegisBeige + player.getName());
+			send(PREFIX + type + " speed reset for " + Athena.aegisAccent + player.getName());
 	}
 
 	public float validateSpeed(float speed) {

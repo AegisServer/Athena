@@ -29,11 +29,11 @@ public class ExperienceCommand extends CustomCommand {
 	@Path("get <player>")
 	@Permission(Group.SENIOR_STAFF)
 	void get(Player player) {
-		send(PREFIX + player.getName() + " has " + Athena.aegisBeige + getFormattedExp(player));
+		send(PREFIX + player.getName() + " has " + Athena.aegisAccent + getFormattedExp(player));
 	}
 
 	private void tellTotalExp(Player player) {
-		send(PREFIX + player.getName() + " now has " + Athena.aegisBeige + getFormattedExp(player));
+		send(PREFIX + player.getName() + " now has " + Athena.aegisAccent + getFormattedExp(player));
 	}
 
 	@Path("set <player> <level>")

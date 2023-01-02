@@ -44,7 +44,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 	@Path
 	void clear() {
 		inventory().setContents(ciPlayer.addCache());
-		send(PREFIX + "Inventory cleared. Undo with" + Athena.aegisBeige + "/ci undo");
+		send(PREFIX + "Inventory cleared. Undo with" + Athena.aegisAccent + "/ci undo");
 	}
 
 	@Path("undo")

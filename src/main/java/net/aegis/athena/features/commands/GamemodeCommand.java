@@ -58,9 +58,9 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 
 		setGameMode(player, gamemode);
 
-		send(player, PREFIX + "Switched to " + Athena.aegisBeige + camelCase(gamemode));
+		send(player, PREFIX + "Switched to " + Athena.aegisAccent + camelCase(gamemode));
 		if (!isSelf(player))
-			send(PREFIX + "Switched to " + Athena.aegisBeige + camelCase(gamemode) + Athena.aegisBlue + " for " + Athena.aegisBeige + player.getName());
+			send(PREFIX + "Switched to " + Athena.aegisAccent + camelCase(gamemode) + Athena.aegisSecondary + " for " + Athena.aegisAccent + player.getName());
 
 		if (!(worldGroup() == WorldGroup.UNKNOWN) && user.getRank().isStaff()) {
 			user.setGameMode(worldGroup(), gamemode);

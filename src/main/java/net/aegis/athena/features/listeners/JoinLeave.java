@@ -16,9 +16,9 @@ public class JoinLeave implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 
-		String joinMessage = StringUtils.colorize(Athena.aegisRed + "Welcome to the server, " + Athena.aegisBlue + player.getName());
+		String joinMessage = StringUtils.colorize(Athena.aegisPrimary + "Welcome to the server, " + Athena.aegisSecondary + player.getName());
 		if (player.hasPlayedBefore())
-			joinMessage = StringUtils.colorize(Athena.aegisBlue + player.getName() + Athena.aegisRed + " has joined the server");
+			joinMessage = StringUtils.colorize(Athena.aegisSecondary + player.getName() + Athena.aegisPrimary + " has joined the server");
 
 		event.setJoinMessage(joinMessage);
 	}
@@ -27,7 +27,7 @@ public class JoinLeave implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 
-		String quitMessage = StringUtils.colorize(Athena.aegisBlue + player.getName() + Athena.aegisRed + " has left the server");
+		String quitMessage = StringUtils.colorize(Athena.aegisSecondary + player.getName() + Athena.aegisPrimary + " has left the server");
 		event.setQuitMessage(quitMessage);
 	}
 
