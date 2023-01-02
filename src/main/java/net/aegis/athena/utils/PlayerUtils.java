@@ -22,24 +22,33 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -401,6 +410,63 @@ public class PlayerUtils {
 		}
 	}
 
+	@Getter
+	private static Map<String, Advancement> advancements = new LinkedHashMap<>();
+
+	static {
+		Map<String, Advancement> advancements = new LinkedHashMap<>();
+		Iterator<Advancement> it = Bukkit.getServer().advancementIterator();
+		while (it.hasNext()) {
+			Advancement advancement = it.next();
+			advancements.put(advancement.getKey().getKey().toLowerCase(), advancement);
+		}
+
+		PlayerUtils.advancements = Utils.sortByKey(advancements);
+	}
+
+	public static Advancement getAdvancement(String name) {
+		name = name.toLowerCase();
+		if (advancements.containsKey(name))
+			return advancements.get(name);
+		throw new InvalidInputException("Advancement &e" + name + " &cnot found");
+	}
+
+	public static boolean selectHotbarItem(Player player, ItemStack toSelect) {
+		final ItemStack mainHand = player.getInventory().getItemInMainHand();
+		if (isNullOrAir(toSelect) || toSelect.equals(mainHand)) {
+			return false;
+		}
+
+		List<ItemStack> contents = Arrays.stream(getHotbarContents(player)).toList();
+		for (int i = 0; i < contents.size(); i++) {
+			ItemStack item = contents.get(i);
+			if (Nullables.isNullOrAir(item))
+				continue;
+
+			if (toSelect.equals(item)) {
+				player.getInventory().setHeldItemSlot(i);
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+
+	public static void removeItems(Player player, List<ItemStack> items) {
+		for (ItemStack item : items) {
+			removeItem(player, item);
+		}
+	}
+
+	public static void removeItem(Player player, ItemStack item) {
+		final Player _player = player.getPlayer();
+		final PlayerInventory inv = _player.getInventory();
+		inv.removeItem(item);
+		if (_player.getItemOnCursor().equals(item))
+			_player.setItemOnCursor(null);
+	}
+
 	public static void giveItem(Player player, Material material) {
 		giveItem(player, material, 1);
 	}
@@ -524,6 +590,27 @@ public class PlayerUtils {
 
 	public static void runCommandAsConsole(String commandNoSlash) {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
+	}
+
+	@NotNull
+	public static Set<@NotNull ItemStack> getNonNullInventoryContents(Player player) {
+		return Arrays.stream(player.getInventory().getContents()).filter(Objects::nonNull).collect(Collectors.toSet());
+	}
+
+	public static ItemStack[] getHotbarContents(Player player) {
+		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 9);
+	}
+
+	public static void giveItemPreferNonHotbar(Player player, ItemStack item) {
+		Set<Integer> openSlots = new HashSet<>();
+		for (int i = 9; i < 36; i++) {
+			if (isNullOrAir(player.getInventory().getContents()[i]))
+				openSlots.add(i);
+		}
+		if (openSlots.size() > 0)
+			player.getInventory().setItem(RandomUtils.randomElement(openSlots), item);
+		else
+			player.getInventory().addItem(item);
 	}
 
 	/**
