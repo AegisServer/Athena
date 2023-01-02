@@ -148,9 +148,9 @@ public final class Athena extends JavaPlugin {
 		}
 	}
 
-	public final static String aegisBlue = "&#6E759F";
-	public final static String aegisRed = "&#9F6E75";
-	public final static String aegisBeige = "&#C1BCAB";
+	public final static String aegisSecondary = "&#625ba7";
+	public final static String aegisPrimary = "&#c6e5c4";
+	public final static String aegisAccent = "&#8459a4 ";
 
 	@Override
 	public void onEnable() {
@@ -237,7 +237,7 @@ public final class Athena extends JavaPlugin {
 
 		Rank.getOnlineStaff().stream()
 				.map(Nerd::getPlayer)
-				.forEach(player -> PlayerUtils.send(player, " &c&l ! &c&l! " + aegisBlue + "Reloading Athena &c&l! &c&l!"));
+				.forEach(player -> PlayerUtils.send(player, " &c&l ! &c&l! " + aegisSecondary + "Reloading Athena &c&l! &c&l!"));
 	}
 
 	private void setupConfig() {
