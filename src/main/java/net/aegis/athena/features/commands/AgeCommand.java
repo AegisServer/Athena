@@ -31,7 +31,7 @@ public class AgeCommand extends CustomCommand {
 
 		try {
 			int year = nerd.getBirthday().until(LocalDate.now()).getYears();
-			send(PREFIX + Nickname.of(nerd) + " is " + Athena.aegisBlue + year + Athena.aegisRed + " years old.");
+			send(PREFIX + Nickname.of(nerd) + " is " + Athena.aegisSecondary + year + Athena.aegisPrimary + " years old.");
 		} catch (Exception ex) {
 			send(PREFIX + "That player does not have a set birthday");
 		}
@@ -69,8 +69,8 @@ public class AgeCommand extends CustomCommand {
 	void server() {
 		ServerAge serverAge = new ServerAge();
 
-		send(Athena.aegisRed + "Aegis was made on" + Athena.aegisBlue + "September 18th, 2022" + Athena.aegisRed + ", at " + Athena.aegisBlue + "10:13 AM ET");
-		send(Athena.aegisRed + "That makes it...");
+		send(Athena.aegisPrimary + "Aegis was made on" + Athena.aegisSecondary + "September 18th, 2022" + Athena.aegisPrimary + ", at " + Athena.aegisSecondary + "10:13 AM ET");
+		send(Athena.aegisPrimary + "That makes it...");
 		line();
 		send("&e" + ServerAge.format(serverAge.getYears()) + " &3years old");
 		send("&e" + ServerAge.format(serverAge.getMonths()) + " &3months old");
