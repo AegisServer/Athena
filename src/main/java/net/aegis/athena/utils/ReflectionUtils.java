@@ -83,9 +83,6 @@ public class ReflectionUtils {
 					.map(ClassInfo::loadClass)
 					.map(clazz -> (Class<? extends T>) clazz)
 					.collect(Collectors.toSet());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new HashSet<>();
 		}
 	}
 

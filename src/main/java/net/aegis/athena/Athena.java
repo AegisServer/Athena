@@ -163,13 +163,9 @@ public final class Athena extends JavaPlugin {
 
 
 		new Timer("Enable", () -> {
-			new Timer(" 1", this::doNothing);
 			new Timer(" Cache Usernames", () -> OnlinePlayers.getAll().forEach(Name::of));
-			new Timer(" 2", this::doNothing);
 			new Timer(" Config", this::setupConfig);
-			new Timer(" 3", this::doNothing);
 			new Timer(" Hooks", this::hooks);
-			new Timer(" 4", this::doNothing);
 
 			try {
 				new Timer(" Databases", this::databases);
@@ -178,25 +174,19 @@ public final class Athena extends JavaPlugin {
 				log("Databases errored");
 				e.printStackTrace();
 			}
-			new Timer(" 5", this::doNothing);
 
 			new Timer(" Features", () -> {
 				features = new Features(this, "net.aegis.athena.features");
 				features.register(Chat.class); // prioritize
 				features.registerAll();
 			});
-			new Timer(" 6", this::doNothing);
 			new Timer(" Commands", () -> {
 				commands = new Commands(this, "net.aegis.athena.features");
 				commands.registerAll();
 			});
-			new Timer(" 7", this::doNothing);
 		});
 
 		//end of command registry
-	}
-
-	public void doNothing() {
 	}
 
 	@Override
@@ -205,12 +195,8 @@ public final class Athena extends JavaPlugin {
 		// Plugin shutdown logic
 
 		List<Runnable> tasks = List.of(
-				() -> {
-					broadcastReload();
-				},
-				() -> {
-					PlayerUtils.runCommandAsConsole("save-all");
-				},
+				() -> {broadcastReload();},
+				() -> {PlayerUtils.runCommandAsConsole("save-all");},
 //				() -> {if (cron.isStarted()) cron.stop();},
 				() -> {if (commands != null) commands.unregisterAll();},
 				() -> {if (features != null) features.unregisterExcept(Chat.class);},
@@ -274,7 +260,7 @@ public final class Athena extends JavaPlugin {
 
 	@Getter
 	@Setter
-	private static boolean debug = true; //false;
+	private static boolean debug = true; // TODO: false
 
 	public static void debug(String message) {
 		if (debug)
@@ -316,29 +302,20 @@ public final class Athena extends JavaPlugin {
 	private void databases() {
 		new Timer(" MongoDB", () -> {
 			// new HomeService();
-			Tasks.wait(5, () -> {
-				try {
-					MongoService.loadServices("net.aegis.athena.models");
-				} catch (Exception e) {
-					e.printStackTrace();
-					log("Services failed to load");
-				}
-			});
+			Tasks.wait(5, () -> MongoService.loadServices("net.aegis.athena.models"));
 		});
 	}
 
 	@SneakyThrows
 	private void shutdownDatabases() {
-		try {
-			for (Class<? extends MongoService> service : MongoService.getServices())
-				if (Utils.canEnable(service)) {
-					final MongoService<?> serviceInstance = service.getConstructor().newInstance();
-					// TODO Maybe per-service setting to save on shutdown? This will save way too many things
+		for (Class<? extends MongoService> service : MongoService.getServices()) {
+			if (Utils.canEnable(service)) {
+				final MongoService<?> serviceInstance = service.getConstructor().newInstance();
+
+				// TODO Maybe per-service setting to save on shutdown? This will save way too many things
 //				serviceInstance.saveCacheSync();
-					serviceInstance.clearCache();
-				}
-		} catch (Exception e) {
-			e.printStackTrace();
+				serviceInstance.clearCache();
+			}
 		}
 	}
 
